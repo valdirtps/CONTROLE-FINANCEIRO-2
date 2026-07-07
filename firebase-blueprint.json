@@ -44,7 +44,8 @@
       "type": "object",
       "properties": {
         "nome": { "type": "string" },
-        "flagMatematica": { "type": "string", "enum": ["+", "-"] }
+        "flagMatematica": { "type": "string", "enum": ["+", "-"] },
+        "dv": { "type": "boolean" }
       },
       "required": ["nome", "flagMatematica"]
     },

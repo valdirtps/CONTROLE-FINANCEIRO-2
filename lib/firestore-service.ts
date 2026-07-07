@@ -218,25 +218,17 @@ export const FirestoreService = {
 
       const tipoDoc = await getDoc(doc(db, 'launchTypes', lancamento.tipoLancamentoId));
       const tipoData = tipoDoc.data() as TipoLancamento;
-      const normalize = (str: string) => str.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
-      const tipoNomeNormalized = tipoData?.nome ? normalize(tipoData.nome) : '';
-      
-      const isReposicao = tipoNomeNormalized.includes('REPOSICAO') || tipoNomeNormalized.includes('REPOSICOES');
-      const isEmprestimo = tipoNomeNormalized.includes('EMPRESTIMO') || tipoNomeNormalized.includes('EMPRESTIMOS');
+      const isDV = tipoData?.dv === true;
 
       const valorParcelaTotal = lancamento.valorTotal / lancamento.numParcelas;
       
       let valorAdmin: number;
       let valorDevedor: number;
 
-      if (isReposicao) {
-        // Reposição: Debit for Admin (valor total) and Credit for Devedor (negative valor total)
-        valorAdmin = valorParcelaTotal;
-        valorDevedor = -valorParcelaTotal;
-      } else if (isEmprestimo) {
-        // Empréstimo: Devedor owes the full installment amount
+      if (isDV) {
+        // Categoria com flag DV marcada: o crédito ou débito fica para o devedor
         valorAdmin = 0;
-        valorDevedor = valorParcelaTotal;
+        valorDevedor = tipoData.flagMatematica === '+' ? -valorParcelaTotal : valorParcelaTotal;
       } else if (lancamento.dividirConta && lancamento.devedorId) {
         if (lancamento.valorDebitoDevedor && lancamento.valorDebitoDevedor > 0) {
           valorDevedor = lancamento.valorDebitoDevedor / lancamento.numParcelas;
@@ -292,23 +284,17 @@ export const FirestoreService = {
       // 3. Create new installments (same logic as addLancamento)
       const tipoDoc = await getDoc(doc(db, 'launchTypes', lancamento.tipoLancamentoId));
       const tipoData = tipoDoc.data() as TipoLancamento;
-      const normalize = (str: string) => str.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
-      const tipoNomeNormalized = tipoData?.nome ? normalize(tipoData.nome) : '';
-      
-      const isReposicao = tipoNomeNormalized.includes('REPOSICAO') || tipoNomeNormalized.includes('REPOSICOES');
-      const isEmprestimo = tipoNomeNormalized.includes('EMPRESTIMO') || tipoNomeNormalized.includes('EMPRESTIMOS');
+      const isDV = tipoData?.dv === true;
 
       const valorParcelaTotal = lancamento.valorTotal / lancamento.numParcelas;
       
       let valorAdmin: number;
       let valorDevedor: number;
 
-      if (isReposicao) {
-        valorAdmin = valorParcelaTotal;
-        valorDevedor = -valorParcelaTotal;
-      } else if (isEmprestimo) {
+      if (isDV) {
+        // Categoria com flag DV marcada: o crédito ou débito fica para o devedor
         valorAdmin = 0;
-        valorDevedor = valorParcelaTotal;
+        valorDevedor = tipoData.flagMatematica === '+' ? -valorParcelaTotal : valorParcelaTotal;
       } else if (lancamento.dividirConta && lancamento.devedorId) {
         if (lancamento.valorDebitoDevedor && lancamento.valorDebitoDevedor > 0) {
           valorDevedor = lancamento.valorDebitoDevedor / lancamento.numParcelas;

@@ -43,7 +43,7 @@ export default function ConsultaADMPage() {
       const isDebito = p.flagMatematica === '-';
       const hasValue = p.valorTotal !== 0;
       
-      return matchesVencimento && matchesConta && isDebito && hasValue;
+      return matchesVencimento && matchesConta && isDebito && hasValue && !p.isDV;
     }).sort((a, b) => a.dataVencimento.localeCompare(b.dataVencimento));
   }, [allLancamentosCompletos, selectedVencimento, selectedConta]);
 
@@ -63,10 +63,10 @@ export default function ConsultaADMPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">
-              Débitos ({admin?.nome || 'ADMIN'})
+              Valores a Pagar ({admin?.nome || 'ADMIN'})
             </h1>
             <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-1">
-              Controle de Débitos por Vencimento e Conta
+              Controle de Valores a Pagar por Vencimento e Conta
             </p>
           </div>
           
@@ -128,7 +128,7 @@ export default function ConsultaADMPage() {
                     <td colSpan={7} className="px-4 py-12 text-center">
                       <div className="flex flex-col items-center gap-2 text-slate-400">
                         <ClipboardList size={32} className="opacity-20" />
-                        <p className="text-[10px] font-black uppercase tracking-widest">Nenhum débito encontrado</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest">Nenhum valor a pagar encontrado</p>
                       </div>
                     </td>
                   </tr>

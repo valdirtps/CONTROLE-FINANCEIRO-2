@@ -73,6 +73,9 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     FirestoreService.getAdmin().then(data => {
       setAdmin(data);
       setLoading(false);
+    }).catch(error => {
+      console.error("Erro ao carregar admin:", error);
+      setLoading(false);
     });
 
     return () => {
@@ -99,12 +102,16 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       const t = l ? tiposMap.get(l.tipoLancamentoId) : undefined;
       const d = l?.devedorId ? devedoresMap.get(l.devedorId) : undefined;
 
-      const tipoNomeNormalized = t?.nome ? normalize(t.nome) : '';
-      const isEmprestimo = tipoNomeNormalized.includes('EMPRESTIMO') || tipoNomeNormalized.includes('EMPRESTIMOS');
+      const isDV = t?.dv === true;
       
-      const valorParcelaTotal = p.valorAdministrador + p.valorDevedor;
-      const finalValorDevedor = isEmprestimo ? valorParcelaTotal : p.valorDevedor;
-      const finalValorAdministrador = isEmprestimo ? 0 : p.valorAdministrador;
+      const valorParcelaTotal = l ? (l.valorTotal / l.numParcelas) : (p.valorAdministrador + p.valorDevedor);
+      let finalValorDevedor = p.valorDevedor;
+      let finalValorAdministrador = p.valorAdministrador;
+
+      if (isDV) {
+        finalValorDevedor = t?.flagMatematica === '+' ? -Math.abs(valorParcelaTotal) : Math.abs(valorParcelaTotal);
+        finalValorAdministrador = 0;
+      }
 
       return {
         ...p,
@@ -120,7 +127,8 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
         dataCompra: l?.dataCompra,
         valorTotal: valorParcelaTotal,
         valorTotalLancamento: l?.valorTotal || 0,
-        valorDebitoDevedor: l?.valorDebitoDevedor
+        valorDebitoDevedor: l?.valorDebitoDevedor,
+        isDV
       };
     });
   }, [parcelas, lancamentos, contas, tipos, devedores]);

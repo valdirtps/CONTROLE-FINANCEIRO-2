@@ -124,8 +124,8 @@ export function AppLayout({ children }: AppLayoutProps) {
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard, href: '/' },
     { name: 'Lançamentos', icon: ListFilter, href: '/lancamentos' },
-    { name: 'Créditos', icon: ListFilter, href: '/consulta-devedores' },
-    { name: 'Débitos', icon: ClipboardList, href: '/consulta-adm' },
+    { name: 'Valores a Receber', icon: ListFilter, href: '/consulta-devedores' },
+    { name: 'Valores a Pagar', icon: ClipboardList, href: '/consulta-adm' },
     { name: 'Contas', icon: Wallet, href: '/contas' },
     { name: 'Devedores', icon: Users, href: '/devedores' },
     { name: 'Categorias', icon: Settings, href: '/tipos' },

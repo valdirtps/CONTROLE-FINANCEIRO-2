@@ -28,6 +28,7 @@ export interface TipoLancamento {
   id: string;
   nome: string;
   flagMatematica: '+' | '-';
+  dv?: boolean;
 }
 
 export type SituacaoParcela = 'Paga' | 'Pendente' | 'Atrasada';
@@ -69,4 +70,5 @@ export interface LancamentoCompleto extends Parcela {
   valorTotal: number;
   valorTotalLancamento: number;
   valorDebitoDevedor?: number;
+  isDV?: boolean;
 }

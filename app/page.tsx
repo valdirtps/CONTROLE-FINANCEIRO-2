@@ -128,7 +128,7 @@ export default function Dashboard() {
                   <th className="px-6 py-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">Data do Vcto</th>
                   <th className="px-6 py-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Receita</th>
                   <th className="px-6 py-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Despesas</th>
-                  <th className="px-6 py-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Crédito</th>
+                  <th className="px-6 py-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Valores a Receber</th>
                   <th className="px-6 py-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Saldo Total</th>
                 </tr>
               </thead>

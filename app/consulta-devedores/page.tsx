@@ -31,7 +31,7 @@ export default function ConsultaDevedoresPage() {
     const [year, month] = selectedVencimento.split('-').map(Number);
     const dateRef = new Date(year, month - 1);
     
-    let message = `*EXTRATO DE DÉBITOS*\n`;
+    let message = `*EXTRATO DE VALORES A PAGAR*\n`;
     message += `*Devedor:* ${devedor.nome.toUpperCase()}\n`;
     message += `*Vencimento:* ${format(dateRef, 'MMMM yyyy', { locale: ptBR }).toUpperCase()}\n\n`;
     
@@ -101,7 +101,7 @@ export default function ConsultaDevedoresPage() {
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Créditos</h1>
+            <h1 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Valores a Receber</h1>
             <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-1">Visão detalhada por vencimento</p>
           </div>
           
@@ -202,7 +202,7 @@ export default function ConsultaDevedoresPage() {
                         </span>
                       </td>
                       <td className="px-4 py-0.5 text-right">
-                        <span className="text-xs font-black text-rose-500">
+                        <span className={`text-xs font-black ${item.valorDevedor >= 0 ? 'text-rose-500' : 'text-emerald-500'}`}>
                           {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.valorDevedor)}
                         </span>
                       </td>
@@ -220,7 +220,7 @@ export default function ConsultaDevedoresPage() {
                       Total no Período:
                     </td>
                     <td className="px-4 py-2 text-right">
-                      <span className="text-sm font-black text-rose-500">
+                      <span className={`text-sm font-black ${filteredData.reduce((acc, curr) => acc + curr.valorDevedor, 0) >= 0 ? 'text-rose-500' : 'text-emerald-500'}`}>
                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
                           filteredData.reduce((acc, curr) => acc + curr.valorDevedor, 0)
                         )}

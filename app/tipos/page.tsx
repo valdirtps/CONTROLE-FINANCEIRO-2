@@ -25,6 +25,7 @@ const schema = z.object({
   flagMatematica: z.enum(['+', '-'], {
     errorMap: () => ({ message: 'Selecione se é Receita (+) ou Despesa (-)' })
   }),
+  dv: z.boolean().optional(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -45,7 +46,8 @@ export default function TiposPage() {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      flagMatematica: '-'
+      flagMatematica: '-',
+      dv: false
     }
   });
 
@@ -70,6 +72,7 @@ export default function TiposPage() {
     setEditingTipo(tipo);
     setValue('nome', tipo.nome);
     setValue('flagMatematica', tipo.flagMatematica as '+' | '-');
+    setValue('dv', tipo.dv || false);
     setIsModalOpen(true);
   };
 
@@ -78,7 +81,8 @@ export default function TiposPage() {
     setEditingTipo(null);
     reset({
       nome: '',
-      flagMatematica: '-'
+      flagMatematica: '-',
+      dv: false
     });
   };
 
@@ -167,7 +171,14 @@ export default function TiposPage() {
                         )}
                       </td>
                       <td className="px-4 py-1">
-                        <span className="text-sm font-black text-slate-700 tracking-tight">{tipo.nome}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-black text-slate-700 tracking-tight">{tipo.nome}</span>
+                          {tipo.dv && (
+                            <span className="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest bg-indigo-100 text-indigo-700 rounded">
+                              DV
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-4 py-1">
                         <div className="flex items-center justify-center gap-1">
@@ -256,6 +267,21 @@ export default function TiposPage() {
                         <span className="font-bold uppercase text-xs tracking-widest">Receita</span>
                       </label>
                     </div>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border-2 border-transparent hover:border-slate-100 transition-all">
+                    <div className="pr-4">
+                      <label className="block text-sm font-black text-slate-800 uppercase tracking-tight">Vincular ao Devedor (DV)</label>
+                      <span className="text-[10px] text-slate-500 font-medium block leading-tight mt-0.5">O crédito/débito ficará para o devedor conforme o parcelamento</span>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                      <input 
+                        {...register('dv')} 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                      />
+                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
                   </div>
 
                   <button

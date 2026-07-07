@@ -45,8 +45,6 @@ export default function LancamentosPage() {
       parcelasByLancamento.set(p.lancamentoId, list);
     });
 
-    const normalize = (str: string) => str.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
-
     return lancamentos.map(l => {
       const c = contasMap.get(l.contaId);
       const t = tiposMap.get(l.tipoLancamentoId);
@@ -61,9 +59,6 @@ export default function LancamentosPage() {
       const valorDevParcela = installments.length > 0 ? installments[0].valorDevedor : 0;
       const valorAdmParcela = installments.length > 0 ? installments[0].valorAdministrador : 0;
 
-      const tipoNomeNormalized = t?.nome ? normalize(t.nome) : '';
-      const isEmprestimo = tipoNomeNormalized.includes('EMPRESTIMO') || tipoNomeNormalized.includes('EMPRESTIMOS');
-
       return {
         id: l.id,
         dataVencimento: firstVencimento,
@@ -77,8 +72,8 @@ export default function LancamentosPage() {
         valorTotal: l.valorTotal,
         valorTotalLancamento: l.valorTotal,
         valorParcela: valorParcela,
-        totalAdm: isEmprestimo ? 0 : valorAdmParcela,
-        totalDev: isEmprestimo ? valorParcela : valorDevParcela
+        totalAdm: valorAdmParcela,
+        totalDev: valorDevParcela
       };
     });
   }, [lancamentos, parcelas, contas, tipos, devedores]);
@@ -252,7 +247,7 @@ export default function LancamentosPage() {
                   <th className="px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">Referente</th>
                   <th className="w-32 px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">Devedor</th>
                   <th className="w-24 px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider text-right">Valor DEV</th>
-                  <th className="w-24 px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">Data Débito</th>
+                  <th className="w-24 px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">Data da Compra</th>
                   <th className="w-20 px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider text-center">Ações</th>
                 </tr>
               </thead>

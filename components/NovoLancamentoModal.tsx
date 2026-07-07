@@ -69,15 +69,13 @@ export function NovoLancamentoModal({ isOpen, onClose, editingId }: NovoLancamen
   const selectedTipo = tipos.find(t => t.id === selectedTipoId);
   
   const normalize = (str: string) => str.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
-  const tipoNomeNormalized = selectedTipo ? normalize(selectedTipo.nome) : '';
-  const isReposicao = tipoNomeNormalized.includes('REPOSICAO') || tipoNomeNormalized.includes('REPOSICOES');
-  const isEmprestimo = tipoNomeNormalized.includes('EMPRESTIMO') || tipoNomeNormalized.includes('EMPRESTIMOS');
+  const isDV = selectedTipo?.dv === true;
 
   React.useEffect(() => {
-    if (isReposicao || isEmprestimo) {
+    if (isDV) {
       setValue('dividirConta', true);
     }
-  }, [isReposicao, isEmprestimo, setValue]);
+  }, [isDV, setValue]);
 
   React.useEffect(() => {
     if (editingId && isOpen) {
@@ -124,18 +122,16 @@ export function NovoLancamentoModal({ isOpen, onClose, editingId }: NovoLancamen
 
   const valorParcela = valorTotal / numParcelas;
   let valorDevedor = 0;
-  if (isReposicao) {
-    valorDevedor = -valorParcela;
-  } else if (isEmprestimo) {
-    valorDevedor = valorParcela;
+  if (isDV) {
+    valorDevedor = selectedTipo?.flagMatematica === '+' ? -valorParcela : valorParcela;
   } else if (dividirConta) {
     valorDevedor = valorDebitoDevedorInput > 0 ? (valorDebitoDevedorInput / numParcelas) : (valorParcela / 2);
   }
-  const valorAdmin = isReposicao ? valorParcela : isEmprestimo ? 0 : valorParcela - valorDevedor;
+  const valorAdmin = isDV ? 0 : valorParcela - valorDevedor;
 
   const onSubmit = async (data: LancamentoFormValues) => {
-    if ((isReposicao || isEmprestimo) && !data.devedorId) {
-      alert(`Para a categoria ${isReposicao ? 'REPOSIÇÃO' : 'EMPRÉSTIMO'}, é obrigatório selecionar um devedor.`);
+    if (isDV && !data.devedorId) {
+      alert(`Para a categoria ${selectedTipo?.nome || 'DV'}, é obrigatório selecionar um devedor.`);
       return;
     }
     try {
@@ -148,7 +144,7 @@ export function NovoLancamentoModal({ isOpen, onClose, editingId }: NovoLancamen
         dataCompra: data.dataCompra || data.vencimentoInicial,
         dividirConta: data.dividirConta,
         devedorId: data.devedorId,
-        valorDebitoDevedor: isEmprestimo ? data.valorTotal : data.valorDebitoDevedor
+        valorDebitoDevedor: isDV ? data.valorTotal : data.valorDebitoDevedor
       };
 
       if (editingId) {
@@ -319,11 +315,11 @@ export function NovoLancamentoModal({ isOpen, onClose, editingId }: NovoLancamen
                       <input
                         {...register('dividirConta')}
                         type="checkbox"
-                        disabled={isReposicao || isEmprestimo}
+                        disabled={isDV}
                         className="w-3 h-3 rounded border-2 border-slate-200 text-emerald-500 focus:ring-emerald-500 transition-all cursor-pointer disabled:opacity-50"
                       />
                       <span className="text-[8px] font-black text-slate-500 uppercase tracking-wider group-hover:text-emerald-500 transition-colors">
-                        Dividir conta com devedor? {(isReposicao || isEmprestimo) && `(Obrigatório para ${isReposicao ? 'Reposição' : 'Empréstimo'})`}
+                        Dividir conta com devedor? {isDV && `(Obrigatório para ${selectedTipo?.nome || 'DV'})`}
                       </span>
                     </label>
                   </div>
@@ -354,8 +350,8 @@ export function NovoLancamentoModal({ isOpen, onClose, editingId }: NovoLancamen
                             {...register('valorDebitoDevedor')}
                             type="number"
                             step="0.01"
-                            disabled={isReposicao || isEmprestimo}
-                            placeholder={isReposicao || isEmprestimo ? "Automático" : "0 para 50/50"}
+                            disabled={isDV}
+                            placeholder={isDV ? "Automático" : "0 para 50/50"}
                             className="w-full bg-white border-2 border-transparent focus:border-emerald-500 rounded-xl pl-7 pr-2.5 py-1 transition-all outline-none font-bold text-xs shadow-sm disabled:opacity-50"
                           />
                         </div>
