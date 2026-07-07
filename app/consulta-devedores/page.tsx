@@ -16,37 +16,6 @@ export default function ConsultaDevedoresPage() {
   const [selectedVencimento, setSelectedVencimento] = useState<string>(format(new Date(), 'yyyy-MM'));
   const [selectedDevedor, setSelectedDevedor] = useState<string>('todos');
 
-  // Extract all unique months from parcelas that have debtor values
-  const availableVencimentos = useMemo(() => {
-    const months = new Set<string>();
-    
-    // Always include current month
-    months.add(format(new Date(), 'yyyy-MM'));
-    
-    allLancamentosCompletos.forEach(p => {
-      if (p.valorDevedor !== 0) {
-        const date = parseISO(p.dataVencimento);
-        months.add(format(date, 'yyyy-MM'));
-      }
-    });
-    return Array.from(months).sort().reverse(); // Most recent first
-  }, [allLancamentosCompletos]);
-
-  const filteredData = useMemo(() => {
-    if (!selectedVencimento) return [];
-    
-    const [year, month] = selectedVencimento.split('-').map(Number);
-    const start = startOfMonth(new Date(year, month - 1));
-    const end = endOfMonth(new Date(year, month - 1));
-
-    return allLancamentosCompletos.filter(p => {
-      const date = parseISO(p.dataVencimento);
-      const matchesVencimento = p.valorDevedor !== 0 && isWithinInterval(date, { start, end });
-      const matchesDevedor = selectedDevedor === 'todos' || p.devedorId === selectedDevedor;
-      return matchesVencimento && matchesDevedor;
-    }).sort((a, b) => a.dataVencimento.localeCompare(b.dataVencimento));
-  }, [allLancamentosCompletos, selectedVencimento, selectedDevedor]);
-
   const handleWhatsAppShare = () => {
     if (selectedDevedor === 'todos' || filteredData.length === 0) return;
 
@@ -84,6 +53,38 @@ export default function ConsultaDevedoresPage() {
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/55${phone}?text=${encodedMessage}`, '_blank');
   };
+
+  // Extract all unique months from parcelas that have debtor values
+  const availableVencimentos = useMemo(() => {
+    const months = new Set<string>();
+    
+    // Always include current month
+    months.add(format(new Date(), 'yyyy-MM'));
+    
+    allLancamentosCompletos.forEach(p => {
+      if (p.valorDevedor !== 0) {
+        const date = parseISO(p.dataVencimento);
+        months.add(format(date, 'yyyy-MM'));
+      }
+    });
+    return Array.from(months).sort().reverse(); // Most recent first
+  }, [allLancamentosCompletos]);
+
+
+  const filteredData = useMemo(() => {
+    if (!selectedVencimento) return [];
+    
+    const [year, month] = selectedVencimento.split('-').map(Number);
+    const start = startOfMonth(new Date(year, month - 1));
+    const end = endOfMonth(new Date(year, month - 1));
+
+    return allLancamentosCompletos.filter(p => {
+      const date = parseISO(p.dataVencimento);
+      const matchesVencimento = p.valorDevedor !== 0 && isWithinInterval(date, { start, end });
+      const matchesDevedor = selectedDevedor === 'todos' || p.devedorId === selectedDevedor;
+      return matchesVencimento && matchesDevedor;
+    }).sort((a, b) => a.dataVencimento.localeCompare(b.dataVencimento));
+  }, [allLancamentosCompletos, selectedVencimento, selectedDevedor]);
 
   if (loading) {
     return (

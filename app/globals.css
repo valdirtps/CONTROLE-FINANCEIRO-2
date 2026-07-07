@@ -39,6 +39,8 @@
 @theme inline {
   --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains-mono);
+  --radius-3xl: 1.5rem;
+  --radius-4xl: 2rem;
 }
 
 @layer base {

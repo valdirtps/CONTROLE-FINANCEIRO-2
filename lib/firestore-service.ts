@@ -49,7 +49,7 @@ interface FirestoreErrorInfo {
   }
 }
 
-function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null, callback?: (data: any) => void) {
+function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
   const errInfo: FirestoreErrorInfo = {
     error: error instanceof Error ? error.message : String(error),
     authInfo: {
@@ -65,9 +65,9 @@ function handleFirestoreError(error: unknown, operationType: OperationType, path
     },
     operationType,
     path
-  };
-  console.warn(`[Firestore Aviso] Operação "${operationType}" em "${path}":`, errInfo.error);
-  if (callback) callback([]);
+  }
+  console.error('Firestore Error: ', JSON.stringify(errInfo));
+  throw new Error(JSON.stringify(errInfo));
 }
 
 export const FirestoreService = {
@@ -95,7 +95,7 @@ export const FirestoreService = {
     return onSnapshot(collection(db, path), (s) => {
       callback(s.docs.map(d => ({ id: d.id, ...d.data() } as Devedor)));
     }, (error) => {
-      handleFirestoreError(error, OperationType.LIST, path, callback);
+      handleFirestoreError(error, OperationType.LIST, path);
     });
   },
   addDebtor: async (data: Omit<Devedor, 'id'>) => {
@@ -129,7 +129,7 @@ export const FirestoreService = {
     return onSnapshot(collection(db, path), (s) => {
       callback(s.docs.map(d => ({ id: d.id, ...d.data() } as Conta)));
     }, (error) => {
-      handleFirestoreError(error, OperationType.LIST, path, callback);
+      handleFirestoreError(error, OperationType.LIST, path);
     });
   },
   addAccount: async (data: Omit<Conta, 'id'>) => {
@@ -163,7 +163,7 @@ export const FirestoreService = {
     return onSnapshot(collection(db, path), (s) => {
       callback(s.docs.map(d => ({ id: d.id, ...d.data() } as TipoLancamento)));
     }, (error) => {
-      handleFirestoreError(error, OperationType.LIST, path, callback);
+      handleFirestoreError(error, OperationType.LIST, path);
     });
   },
   addType: async (data: Omit<TipoLancamento, 'id'>) => {
@@ -197,7 +197,7 @@ export const FirestoreService = {
     return onSnapshot(collection(db, path), (s) => {
       callback(s.docs.map(d => ({ id: d.id, ...d.data() } as Lancamento)));
     }, (error) => {
-      handleFirestoreError(error, OperationType.LIST, path, callback);
+      handleFirestoreError(error, OperationType.LIST, path);
     });
   },
   getParcelas: (callback: (data: Parcela[]) => void) => {
@@ -205,7 +205,7 @@ export const FirestoreService = {
     return onSnapshot(collection(db, path), (s) => {
       callback(s.docs.map(d => ({ id: d.id, ...d.data() } as Parcela)));
     }, (error) => {
-      handleFirestoreError(error, OperationType.LIST, path, callback);
+      handleFirestoreError(error, OperationType.LIST, path);
     });
   },
 

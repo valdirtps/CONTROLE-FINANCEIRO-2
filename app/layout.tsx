@@ -5,7 +5,10 @@ import { FirebaseProvider } from "@/components/FirebaseProvider";
 import { FinanceProvider } from "@/context/FinanceContext";
 import { Toaster } from "sonner";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ 
+  subsets: ["latin"],
+  variable: "--font-inter"
+});
 
 export const metadata: Metadata = {
   title: "FinancePro",
@@ -19,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className={inter.className}>
+      <body className={`${inter.variable} font-sans`}>
         <FirebaseProvider>
           <FinanceProvider>
             {children}

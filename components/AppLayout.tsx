@@ -18,9 +18,7 @@ import {
   LogIn,
   Lock,
   Sliders,
-  ClipboardList,
-  AlertTriangle,
-  UserCheck
+  ClipboardList
 } from 'lucide-react';
 import { useFinance } from '@/context/FinanceContext';
 import { useAuth } from '@/components/FirebaseProvider';
@@ -37,7 +35,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const pathname = usePathname();
   const { currentMonth, setCurrentMonth, allLancamentosCompletos } = useFinance();
-  const { user, loading: authLoading, authError, login, loginGuest, loginDemo } = useAuth();
+  const { user, loading: authLoading, login } = useAuth();
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -147,75 +145,26 @@ export function AppLayout({ children }: AppLayoutProps) {
   }
 
   if (!user) {
-    const isDomainError = authError?.startsWith('DOMINIO_NAO_AUTORIZADO:');
-    const unauthorizedDomain = isDomainError ? (authError?.split(':')[1] || '') : '';
-
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="max-w-lg w-full bg-white rounded-3xl shadow-2xl shadow-slate-200 p-8 md:p-10 text-center border border-slate-100">
-          <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <Lock className="text-emerald-500" size={32} />
+        <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl shadow-slate-200 p-8 md:p-12 text-center border border-slate-100">
+          <div className="w-20 h-20 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-8">
+            <Lock className="text-emerald-500" size={40} />
           </div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tighter mb-2">
+          <h1 className="text-3xl font-black text-slate-900 tracking-tighter mb-4">
             FINANCE<span className="text-emerald-500">PRO</span>
           </h1>
-          <p className="text-slate-600 mb-6 text-sm font-medium">
-            Bem-vindo! Faça login ou acesse como Convidado para testar o sistema.
+          <p className="text-slate-600 mb-10 font-medium">
+            Bem-vindo! Por favor, faça login com sua conta Google para acessar o sistema.
           </p>
-
-          {authError && (
-            <div className="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-left text-xs text-amber-900 shadow-sm">
-              <div className="flex items-start gap-2.5">
-                <AlertTriangle className="text-amber-600 shrink-0 mt-0.5" size={18} />
-                <div className="flex-1">
-                  {isDomainError ? (
-                    <>
-                      <p className="font-bold text-amber-950 text-sm mb-1">Domínio não autorizado no Firebase</p>
-                      <p className="mb-2 text-amber-800">
-                        O login com Google em pop-up requer que o domínio atual esteja na lista de domínios autorizados.
-                      </p>
-                      <div className="bg-white p-2 rounded-lg border border-amber-300 font-mono text-slate-800 select-all mb-2 break-all text-[11px]">
-                        {unauthorizedDomain || (typeof window !== 'undefined' ? window.location.hostname : 'localhost')}
-                      </div>
-                      <p className="text-amber-800">
-                        Adicione este domínio no <strong>Console do Firebase &gt; Autenticação &gt; Configurações &gt; Domínios autorizados</strong> ou clique abaixo para <strong>Acessar Modo Demonstração</strong>.
-                      </p>
-                    </>
-                  ) : (
-                    <p className="font-medium">{authError}</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="space-y-3">
-            <button 
-              onClick={login}
-              className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3.5 px-6 rounded-2xl transition-all shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-3 active:scale-[0.98]"
-            >
-              <LogIn size={20} />
-              Entrar com Google
-            </button>
-
-            <button 
-              onClick={loginGuest}
-              className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 px-6 rounded-2xl transition-all flex items-center justify-center gap-3 active:scale-[0.98]"
-            >
-              <UserCheck size={20} className="text-slate-500" />
-              Entrar com Firebase (Anônimo)
-            </button>
-
-            <button 
-              onClick={loginDemo}
-              className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 px-6 rounded-2xl transition-all shadow-md shadow-amber-500/20 flex items-center justify-center gap-3 active:scale-[0.98]"
-            >
-              <Sliders size={20} />
-              Acessar Modo Demonstração (Local)
-            </button>
-          </div>
-
-          <p className="mt-6 text-xs text-slate-400 font-medium">
+          <button 
+            onClick={login}
+            className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-3 active:scale-[0.98]"
+          >
+            <LogIn size={20} />
+            Entrar com Google
+          </button>
+          <p className="mt-8 text-xs text-slate-400 font-medium">
             Sistema Seguro & Criptografado
           </p>
         </div>

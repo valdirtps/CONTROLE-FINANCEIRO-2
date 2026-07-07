@@ -64,57 +64,18 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     }
 
     setLoading(true);
-    
-    // Lista para rastrear quantas fontes de dados terminaram de carregar
-    let loadedCount = 0;
-    const totalSources = 6; // devedores, contas, tipos, lancamentos, parcelas, admin
-
-    const checkDone = () => {
-      loadedCount++;
-      if (loadedCount >= totalSources) {
-        setLoading(false);
-      }
-    };
-
-    const unsubDevedores = FirestoreService.getDevedores((data) => {
-      setDevedores(data);
-      checkDone();
-    });
-    const unsubContas = FirestoreService.getContas((data) => {
-      setContas(data);
-      checkDone();
-    });
-    const unsubTipos = FirestoreService.getTipos((data) => {
-      setTipos(data);
-      checkDone();
-    });
-    const unsubLancamentos = FirestoreService.getLancamentos((data) => {
-      setLancamentos(data);
-      checkDone();
-    });
-    const unsubParcelas = FirestoreService.getParcelas((data) => {
-      setParcelas(data);
-      checkDone();
-    });
+    const unsubDevedores = FirestoreService.getDevedores(setDevedores);
+    const unsubContas = FirestoreService.getContas(setContas);
+    const unsubTipos = FirestoreService.getTipos(setTipos);
+    const unsubLancamentos = FirestoreService.getLancamentos(setLancamentos);
+    const unsubParcelas = FirestoreService.getParcelas(setParcelas);
     
     FirestoreService.getAdmin().then(data => {
       setAdmin(data);
-      checkDone();
-    }).catch(err => {
-      console.error('Erro ao carregar admin:', err);
-      checkDone();
+      setLoading(false);
     });
 
-    // Timeout de segurança para não travar na tela de carregamento infinitamente
-    const timeout = setTimeout(() => {
-      if (loading) {
-        console.warn('Timeout ao carregar dados do Firebase. Verifique sua conexão ou permissões.');
-        setLoading(false);
-      }
-    }, 8000);
-
     return () => {
-      clearTimeout(timeout);
       unsubDevedores();
       unsubContas();
       unsubTipos();
