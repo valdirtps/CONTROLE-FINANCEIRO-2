@@ -1,16 +1,15 @@
 export interface Administrador {
   id?: string;
+  userId?: string;
   nome: string;
-  cpf?: string;
   email: string;
-  telefone?: string;
-  endereco?: string;
-  cidade?: string;
-  estado?: string;
+  pix?: string;
+  contato?: string;
 }
 
 export interface Devedor {
   id: string;
+  userId?: string;
   nome: string;
   cpf?: string;
   telefone: string;
@@ -20,12 +19,14 @@ export interface Devedor {
 
 export interface Conta {
   id: string;
+  userId?: string;
   nome: string;
   descricao: string;
 }
 
 export interface TipoLancamento {
   id: string;
+  userId?: string;
   nome: string;
   flagMatematica: '+' | '-';
   dv?: boolean;
@@ -35,6 +36,7 @@ export type SituacaoParcela = 'Paga' | 'Pendente' | 'Atrasada';
 
 export interface Lancamento {
   id: string;
+  userId?: string;
   vencimentoInicial?: string;
   tipoLancamentoId: string;
   contaId: string;
@@ -49,6 +51,7 @@ export interface Lancamento {
 
 export interface Parcela {
   id: string;
+  userId?: string;
   lancamentoId: string;
   numeroParcela: number;
   totalParcelas: number;

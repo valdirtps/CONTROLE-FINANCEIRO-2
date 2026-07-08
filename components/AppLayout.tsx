@@ -23,6 +23,7 @@ import {
 import { useFinance } from '@/context/FinanceContext';
 import { useAuth } from '@/components/FirebaseProvider';
 import { auth } from '@/lib/firebase';
+import { FirestoreService } from '@/lib/firestore-service';
 import { signOut } from 'firebase/auth';
 import { format, parseISO, startOfMonth } from 'date-fns';
 
@@ -35,32 +36,108 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const pathname = usePathname();
   const { currentMonth, setCurrentMonth, allLancamentosCompletos } = useFinance();
-  const { user, loading: authLoading, loginWithGoogle, loginWithEmail, registerWithEmail, logout } = useAuth();
+  const { user, loading: authLoading, loginWithGoogle, loginWithEmail, registerWithEmail, resetPassword, logout } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [nome, setNome] = useState('');
+  const [pix, setPix] = useState('');
+  const [contato, setContato] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
   const [authError, setAuthError] = useState('');
+  const [authSuccess, setAuthSuccess] = useState('');
+  const [isAuthLoading, setIsAuthLoading] = useState(false);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isAuthLoading) return;
+    
     setAuthError('');
+    setIsAuthLoading(true);
+
+    const trimmedEmail = email.trim();
+    
+    if (isRegistering && password !== confirmPassword) {
+      setAuthError('As senhas não coincidem.');
+      setIsAuthLoading(false);
+      return;
+    }
+    
     try {
       if (isRegistering) {
-        await registerWithEmail(email, password);
+        await registerWithEmail(trimmedEmail, password);
+        // Initialize admin profile
+        await FirestoreService.setAdmin({
+          nome,
+          email: trimmedEmail,
+          pix,
+          contato
+        });
       } else {
-        await loginWithEmail(email, password);
+        await loginWithEmail(trimmedEmail, password);
       }
     } catch (error: any) {
-      setAuthError(error.message || 'Erro na autenticação');
+      console.error('Erro na autenticação:', error);
+      let msg = error.message || 'Erro na autenticação';
+      
+      if (error.code === 'auth/operation-not-allowed') {
+        msg = 'O login com Email/Senha não está ativado no Firebase Console. Ative-o em Authentication > Sign-in method.';
+      } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+        msg = 'Email ou senha incorretos. Verifique seus dados ou crie uma nova conta.';
+      } else if (error.code === 'auth/email-already-in-use') {
+        msg = 'Este email já está cadastrado. Tente fazer login.';
+      } else if (error.code === 'auth/weak-password') {
+        msg = 'A senha deve ter pelo menos 6 caracteres.';
+      } else if (error.code === 'auth/invalid-email') {
+        msg = 'Formato de email inválido.';
+      } else if (error.code === 'auth/account-exists-with-different-credential') {
+        msg = 'Este email já está associado a outro método de login (ex: Google). Tente entrar usando o Google.';
+      }
+      
+      setAuthError(msg);
+    } finally {
+      setIsAuthLoading(false);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!email) {
+      setAuthError('Digite seu email para recuperar a senha.');
+      return;
+    }
+    
+    setIsAuthLoading(true);
+    setAuthError('');
+    setAuthSuccess('');
+    
+    try {
+      await resetPassword(email.trim());
+      setAuthSuccess('E-mail de recuperação enviado! Se não receber em 1 minuto, verifique sua caixa de Spam ou Lixo Eletrônico.');
+    } catch (error: any) {
+      console.error('Erro ao resetar senha:', error);
+      let msg = 'Erro ao enviar email de recuperação.';
+      if (error.code === 'auth/user-not-found') {
+        msg = 'Usuário não encontrado com este email.';
+      } else if (error.code === 'auth/invalid-email') {
+        msg = 'Formato de email inválido.';
+      }
+      setAuthError(msg);
+    } finally {
+      setIsAuthLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
+    if (isAuthLoading) return;
     setAuthError('');
+    setIsAuthLoading(true);
     try {
       await loginWithGoogle();
     } catch (error: any) {
       setAuthError(error.message || 'Erro no login com Google');
+    } finally {
+      setIsAuthLoading(false);
     }
   };
 
@@ -186,6 +263,45 @@ export function AppLayout({ children }: AppLayoutProps) {
           </p>
 
           <form onSubmit={handleAuth} className="space-y-4 mb-6">
+            {isRegistering && (
+              <>
+                <div className="text-left space-y-1">
+                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Nome Completo</label>
+                  <input 
+                    type="text" 
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
+                    required
+                    className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium"
+                    placeholder="Seu nome"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-left space-y-1">
+                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Chave PIX</label>
+                    <input 
+                      type="text" 
+                      value={pix}
+                      onChange={(e) => setPix(e.target.value)}
+                      required
+                      className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium"
+                      placeholder="Email, CPF ou Celular"
+                    />
+                  </div>
+                  <div className="text-left space-y-1">
+                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Contato</label>
+                    <input 
+                      type="text" 
+                      value={contato}
+                      onChange={(e) => setContato(e.target.value)}
+                      required
+                      className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium"
+                      placeholder="(00) 00000-0000"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
             <div className="text-left space-y-1">
               <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Email</label>
               <input 
@@ -197,17 +313,40 @@ export function AppLayout({ children }: AppLayoutProps) {
                 placeholder="seu@email.com"
               />
             </div>
-            <div className="text-left space-y-1">
+            <div className="text-left space-y-1 relative">
               <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Senha</label>
-              <input 
-                type="password" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium"
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium pr-14"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-1"
+                >
+                  {showPassword ? <X size={18} /> : <Lock size={18} />}
+                </button>
+              </div>
             </div>
+
+            {isRegistering && (
+              <div className="text-left space-y-1">
+                <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Confirmar Senha</label>
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium"
+                  placeholder="••••••••"
+                />
+              </div>
+            )}
 
             {authError && (
               <p className="text-rose-500 text-xs font-bold bg-rose-50 p-3 rounded-xl border border-rose-100">
@@ -215,13 +354,30 @@ export function AppLayout({ children }: AppLayoutProps) {
               </p>
             )}
 
+            {authSuccess && (
+              <p className="text-emerald-500 text-xs font-bold bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                {authSuccess}
+              </p>
+            )}
+
             <button 
               type="submit"
-              className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-lg shadow-slate-900/10 flex items-center justify-center gap-3 active:scale-[0.98]"
+              disabled={isAuthLoading}
+              className="w-full bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-lg shadow-slate-900/10 flex items-center justify-center gap-3 active:scale-[0.98]"
             >
-              {isRegistering ? 'Cadastrar Administrador' : 'Entrar no Sistema'}
+              {isAuthLoading ? 'Processando...' : (isRegistering ? 'Cadastrar Administrador' : 'Entrar no Sistema')}
             </button>
           </form>
+
+          {!isRegistering && (
+            <button 
+              onClick={handleResetPassword}
+              disabled={isAuthLoading}
+              className="text-xs font-bold text-slate-400 hover:text-emerald-500 transition-colors mb-6 block mx-auto uppercase tracking-widest"
+            >
+              Esqueci minha senha
+            </button>
+          )}
 
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
@@ -234,15 +390,21 @@ export function AppLayout({ children }: AppLayoutProps) {
 
           <button 
             onClick={handleGoogleLogin}
-            className="w-full bg-white border-2 border-slate-100 hover:border-emerald-500/30 hover:bg-slate-50 text-slate-600 font-bold py-4 px-6 rounded-2xl transition-all flex items-center justify-center gap-3 active:scale-[0.98]"
+            disabled={isAuthLoading}
+            className="w-full bg-white border-2 border-slate-100 hover:border-emerald-500/30 hover:bg-slate-50 disabled:opacity-50 text-slate-600 font-bold py-4 px-6 rounded-2xl transition-all flex items-center justify-center gap-3 active:scale-[0.98]"
           >
             <LogIn size={20} className="text-emerald-500" />
-            Entrar com Google
+            {isAuthLoading ? 'Entrando...' : 'Entrar com Google'}
           </button>
 
           <button 
-            onClick={() => setIsRegistering(!isRegistering)}
-            className="mt-6 text-sm font-bold text-emerald-600 hover:text-emerald-700 transition-colors"
+            onClick={() => {
+              setIsRegistering(!isRegistering);
+              setAuthError('');
+              setAuthSuccess('');
+            }}
+            disabled={isAuthLoading}
+            className="mt-6 text-sm font-bold text-emerald-600 hover:text-emerald-700 disabled:opacity-50 transition-colors"
           >
             {isRegistering ? 'Já tenho uma conta? Entrar' : 'Novo por aqui? Criar conta ADM'}
           </button>
