@@ -1,64 +1,40 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Helper functions
     function isSignedIn() {
       return request.auth != null;
     }
-    
-    function isValidId(id) {
-      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
-    }
-    
-    function incoming() {
-      return request.resource.data;
-    }
-    
-    function existing() {
-      return resource.data;
+
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && request.auth.uid == userId;
     }
 
-    // Admin Info
-    match /settings/admin {
-      allow read, write: if isSignedIn();
+    match /debtors/{id} {
+      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid);
+      allow write: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid) && request.resource.data.userId == request.auth.uid;
     }
 
-    // Debtors
-    match /debtors/{debtorId} {
-      allow get: if isSignedIn() && isValidId(debtorId);
-      allow list: if isSignedIn();
-      allow create, update, delete: if isSignedIn() && isValidId(debtorId);
+    match /accounts/{id} {
+      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid);
+      allow write: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid) && request.resource.data.userId == request.auth.uid;
     }
 
-    // Accounts
-    match /accounts/{accountId} {
-      allow get: if isSignedIn() && isValidId(accountId);
-      allow list: if isSignedIn();
-      allow create, update, delete: if isSignedIn() && isValidId(accountId);
+    match /launchTypes/{id} {
+      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid);
+      allow write: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid) && request.resource.data.userId == request.auth.uid;
     }
 
-    // Launch Types
-    match /launchTypes/{typeId} {
-      allow get: if isSignedIn() && isValidId(typeId);
-      allow list: if isSignedIn();
-      allow create, update, delete: if isSignedIn() && isValidId(typeId);
+    match /transactions/{id} {
+      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid);
+      allow write: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid) && request.resource.data.userId == request.auth.uid;
     }
 
-    // Transactions
-    match /transactions/{transactionId} {
-      allow get: if isSignedIn() && isValidId(transactionId);
-      allow list: if isSignedIn();
-      allow create, update, delete: if isSignedIn() && isValidId(transactionId);
+    match /parcelas/{id} {
+      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid);
+      allow write: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid) && request.resource.data.userId == request.auth.uid;
     }
 
-    // Parcelas
-    match /parcelas/{parcelaId} {
-      allow get: if isSignedIn() && isValidId(parcelaId);
-      allow list: if isSignedIn();
-      allow create, update, delete: if isSignedIn() && isValidId(parcelaId);
-    }
-
-    // Default deny
     match /{document=**} {
       allow read, write: if false;
     }

@@ -35,7 +35,42 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const pathname = usePathname();
   const { currentMonth, setCurrentMonth, allLancamentosCompletos } = useFinance();
-  const { user, loading: authLoading, login } = useAuth();
+  const { user, loading: authLoading, loginWithGoogle, loginWithEmail, registerWithEmail, logout } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [authError, setAuthError] = useState('');
+
+  const handleAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError('');
+    try {
+      if (isRegistering) {
+        await registerWithEmail(email, password);
+      } else {
+        await loginWithEmail(email, password);
+      }
+    } catch (error: any) {
+      setAuthError(error.message || 'Erro na autenticação');
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setAuthError('');
+    try {
+      await loginWithGoogle();
+    } catch (error: any) {
+      setAuthError(error.message || 'Erro no login com Google');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Erro ao sair:', error);
+    }
+  };
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -113,14 +148,6 @@ export function AppLayout({ children }: AppLayoutProps) {
     return Array.from(monthsMap.values()).sort((a, b) => b.dateObj.getTime() - a.dateObj.getTime());
   }, [allLancamentosCompletos]);
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      console.error('Erro ao sair:', error);
-    }
-  };
-
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard, href: '/' },
     { name: 'Lançamentos', icon: ListFilter, href: '/lancamentos' },
@@ -154,16 +181,72 @@ export function AppLayout({ children }: AppLayoutProps) {
           <h1 className="text-3xl font-black text-slate-900 tracking-tighter mb-4">
             FINANCE<span className="text-emerald-500">PRO</span>
           </h1>
-          <p className="text-slate-600 mb-10 font-medium">
-            Bem-vindo! Por favor, faça login com sua conta Google para acessar o sistema.
+          <p className="text-slate-600 mb-6 font-medium">
+            {isRegistering ? 'Crie sua conta administrativa' : 'Bem-vindo! Faça login para acessar o sistema.'}
           </p>
+
+          <form onSubmit={handleAuth} className="space-y-4 mb-6">
+            <div className="text-left space-y-1">
+              <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Email</label>
+              <input 
+                type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium"
+                placeholder="seu@email.com"
+              />
+            </div>
+            <div className="text-left space-y-1">
+              <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Senha</label>
+              <input 
+                type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium"
+                placeholder="••••••••"
+              />
+            </div>
+
+            {authError && (
+              <p className="text-rose-500 text-xs font-bold bg-rose-50 p-3 rounded-xl border border-rose-100">
+                {authError}
+              </p>
+            )}
+
+            <button 
+              type="submit"
+              className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-lg shadow-slate-900/10 flex items-center justify-center gap-3 active:scale-[0.98]"
+            >
+              {isRegistering ? 'Cadastrar Administrador' : 'Entrar no Sistema'}
+            </button>
+          </form>
+
+          <div className="relative mb-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-100"></div>
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white px-4 text-slate-400 font-black tracking-widest">ou</span>
+            </div>
+          </div>
+
           <button 
-            onClick={login}
-            className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-3 active:scale-[0.98]"
+            onClick={handleGoogleLogin}
+            className="w-full bg-white border-2 border-slate-100 hover:border-emerald-500/30 hover:bg-slate-50 text-slate-600 font-bold py-4 px-6 rounded-2xl transition-all flex items-center justify-center gap-3 active:scale-[0.98]"
           >
-            <LogIn size={20} />
+            <LogIn size={20} className="text-emerald-500" />
             Entrar com Google
           </button>
+
+          <button 
+            onClick={() => setIsRegistering(!isRegistering)}
+            className="mt-6 text-sm font-bold text-emerald-600 hover:text-emerald-700 transition-colors"
+          >
+            {isRegistering ? 'Já tenho uma conta? Entrar' : 'Novo por aqui? Criar conta ADM'}
+          </button>
+
           <p className="mt-8 text-xs text-slate-400 font-medium">
             Sistema Seguro & Criptografado
           </p>

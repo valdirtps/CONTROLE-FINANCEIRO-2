@@ -73,37 +73,45 @@ function handleFirestoreError(error: unknown, operationType: OperationType, path
 export const FirestoreService = {
   // Admin
   getAdmin: async () => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return null;
+    const path = `users/${uid}`;
     try {
-      const d = await getDoc(doc(db, 'settings', 'admin'));
+      const d = await getDoc(doc(db, 'users', uid));
       return d.exists() ? (d.data() as Administrador) : null;
     } catch (error) {
-      handleFirestoreError(error, OperationType.GET, 'settings/admin');
+      handleFirestoreError(error, OperationType.GET, path);
       return null;
     }
   },
   setAdmin: async (admin: Administrador) => {
     try {
-      await setDoc(doc(db, 'settings', 'admin'), admin);
+      const uid = auth.currentUser?.uid;
+      if (!uid) return;
+      await setDoc(doc(db, 'users', uid), { ...admin, userId: uid });
     } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, 'settings/admin');
+      handleFirestoreError(error, OperationType.WRITE, 'users');
     }
   },
 
   // Debtors
   getDevedores: (callback: (data: Devedor[]) => void) => {
-    const path = 'debtors';
-    return onSnapshot(collection(db, path), (s) => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return () => {};
+    const q = query(collection(db, 'debtors'), where('userId', '==', uid));
+    return onSnapshot(q, (s) => {
       callback(s.docs.map(d => ({ id: d.id, ...d.data() } as Devedor)));
     }, (error) => {
-      handleFirestoreError(error, OperationType.LIST, path);
+      handleFirestoreError(error, OperationType.LIST, 'debtors');
     });
   },
   addDebtor: async (data: Omit<Devedor, 'id'>) => {
-    const path = 'debtors';
     try {
-      await addDoc(collection(db, path), data);
+      const uid = auth.currentUser?.uid;
+      if (!uid) return;
+      await addDoc(collection(db, 'debtors'), { ...data, userId: uid });
     } catch (error) {
-      handleFirestoreError(error, OperationType.CREATE, path);
+      handleFirestoreError(error, OperationType.CREATE, 'debtors');
     }
   },
   updateDebtor: async (id: string, data: Partial<Devedor>) => {
@@ -125,19 +133,22 @@ export const FirestoreService = {
 
   // Accounts
   getContas: (callback: (data: Conta[]) => void) => {
-    const path = 'accounts';
-    return onSnapshot(collection(db, path), (s) => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return () => {};
+    const q = query(collection(db, 'accounts'), where('userId', '==', uid));
+    return onSnapshot(q, (s) => {
       callback(s.docs.map(d => ({ id: d.id, ...d.data() } as Conta)));
     }, (error) => {
-      handleFirestoreError(error, OperationType.LIST, path);
+      handleFirestoreError(error, OperationType.LIST, 'accounts');
     });
   },
   addAccount: async (data: Omit<Conta, 'id'>) => {
-    const path = 'accounts';
     try {
-      await addDoc(collection(db, path), data);
+      const uid = auth.currentUser?.uid;
+      if (!uid) return;
+      await addDoc(collection(db, 'accounts'), { ...data, userId: uid });
     } catch (error) {
-      handleFirestoreError(error, OperationType.CREATE, path);
+      handleFirestoreError(error, OperationType.CREATE, 'accounts');
     }
   },
   updateAccount: async (id: string, data: Partial<Conta>) => {
@@ -159,19 +170,22 @@ export const FirestoreService = {
 
   // Types
   getTipos: (callback: (data: TipoLancamento[]) => void) => {
-    const path = 'launchTypes';
-    return onSnapshot(collection(db, path), (s) => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return () => {};
+    const q = query(collection(db, 'launchTypes'), where('userId', '==', uid));
+    return onSnapshot(q, (s) => {
       callback(s.docs.map(d => ({ id: d.id, ...d.data() } as TipoLancamento)));
     }, (error) => {
-      handleFirestoreError(error, OperationType.LIST, path);
+      handleFirestoreError(error, OperationType.LIST, 'launchTypes');
     });
   },
   addType: async (data: Omit<TipoLancamento, 'id'>) => {
-    const path = 'launchTypes';
     try {
-      await addDoc(collection(db, path), data);
+      const uid = auth.currentUser?.uid;
+      if (!uid) return;
+      await addDoc(collection(db, 'launchTypes'), { ...data, userId: uid });
     } catch (error) {
-      handleFirestoreError(error, OperationType.CREATE, path);
+      handleFirestoreError(error, OperationType.CREATE, 'launchTypes');
     }
   },
   updateType: async (id: string, data: Partial<TipoLancamento>) => {
@@ -193,27 +207,32 @@ export const FirestoreService = {
 
   // Transactions & Installments
   getLancamentos: (callback: (data: Lancamento[]) => void) => {
-    const path = 'transactions';
-    return onSnapshot(collection(db, path), (s) => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return () => {};
+    const q = query(collection(db, 'transactions'), where('userId', '==', uid));
+    return onSnapshot(q, (s) => {
       callback(s.docs.map(d => ({ id: d.id, ...d.data() } as Lancamento)));
     }, (error) => {
-      handleFirestoreError(error, OperationType.LIST, path);
+      handleFirestoreError(error, OperationType.LIST, 'transactions');
     });
   },
   getParcelas: (callback: (data: Parcela[]) => void) => {
-    const path = 'parcelas';
-    return onSnapshot(collection(db, path), (s) => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return () => {};
+    const q = query(collection(db, 'parcelas'), where('userId', '==', uid));
+    return onSnapshot(q, (s) => {
       callback(s.docs.map(d => ({ id: d.id, ...d.data() } as Parcela)));
     }, (error) => {
-      handleFirestoreError(error, OperationType.LIST, path);
+      handleFirestoreError(error, OperationType.LIST, 'parcelas');
     });
   },
 
   addLancamento: async (lancamento: Omit<Lancamento, 'id'>, firstVencimento: string) => {
-    const pathL = 'transactions';
-    const pathP = 'parcelas';
     try {
-      const lRef = await addDoc(collection(db, pathL), lancamento);
+      const uid = auth.currentUser?.uid;
+      if (!uid) return;
+
+      const lRef = await addDoc(collection(db, 'transactions'), { ...lancamento, userId: uid });
       const id = lRef.id;
 
       const tipoDoc = await getDoc(doc(db, 'launchTypes', lancamento.tipoLancamentoId));
@@ -226,7 +245,6 @@ export const FirestoreService = {
       let valorDevedor: number;
 
       if (isDV) {
-        // Categoria com flag DV marcada: o crédito ou débito fica para o devedor
         valorAdmin = 0;
         valorDevedor = tipoData.flagMatematica === '+' ? -valorParcelaTotal : valorParcelaTotal;
       } else if (lancamento.dividirConta && lancamento.devedorId) {
@@ -244,7 +262,8 @@ export const FirestoreService = {
 
       for (let i = 0; i < lancamento.numParcelas; i++) {
         const vencimento = addMonths(new Date(firstVencimento + 'T12:00:00'), i);
-        await addDoc(collection(db, pathP), {
+        await addDoc(collection(db, 'parcelas'), {
+          userId: uid,
           lancamentoId: id,
           numeroParcela: i + 1,
           totalParcelas: lancamento.numParcelas,
@@ -255,7 +274,7 @@ export const FirestoreService = {
         });
       }
     } catch (error) {
-      handleFirestoreError(error, OperationType.CREATE, `${pathL}/${pathP}`);
+      handleFirestoreError(error, OperationType.CREATE, 'transactions/parcelas');
     }
   },
 
@@ -269,19 +288,20 @@ export const FirestoreService = {
   },
 
   updateLancamento: async (id: string, lancamento: Omit<Lancamento, 'id'>, firstVencimento: string) => {
-    const pathL = `transactions/${id}`;
-    const pathP = 'parcelas';
     try {
+      const uid = auth.currentUser?.uid;
+      if (!uid) return;
+
       // 1. Update the main transaction
       await updateDoc(doc(db, 'transactions', id), lancamento);
 
       // 2. Delete existing installments
-      const q = query(collection(db, pathP), where('lancamentoId', '==', id));
+      const q = query(collection(db, 'parcelas'), where('lancamentoId', '==', id));
       const s = await getDocs(q);
       const deleteBatch = s.docs.map(d => deleteDoc(d.ref));
       await Promise.all(deleteBatch);
 
-      // 3. Create new installments (same logic as addLancamento)
+      // 3. Create new installments
       const tipoDoc = await getDoc(doc(db, 'launchTypes', lancamento.tipoLancamentoId));
       const tipoData = tipoDoc.data() as TipoLancamento;
       const isDV = tipoData?.dv === true;
@@ -292,7 +312,6 @@ export const FirestoreService = {
       let valorDevedor: number;
 
       if (isDV) {
-        // Categoria com flag DV marcada: o crédito ou débito fica para o devedor
         valorAdmin = 0;
         valorDevedor = tipoData.flagMatematica === '+' ? -valorParcelaTotal : valorParcelaTotal;
       } else if (lancamento.dividirConta && lancamento.devedorId) {
@@ -310,7 +329,8 @@ export const FirestoreService = {
 
       for (let i = 0; i < lancamento.numParcelas; i++) {
         const vencimento = addMonths(new Date(firstVencimento + 'T12:00:00'), i);
-        await addDoc(collection(db, pathP), {
+        await addDoc(collection(db, 'parcelas'), {
+          userId: uid,
           lancamentoId: id,
           numeroParcela: i + 1,
           totalParcelas: lancamento.numParcelas,
@@ -321,7 +341,7 @@ export const FirestoreService = {
         });
       }
     } catch (error) {
-      handleFirestoreError(error, OperationType.UPDATE, `${pathL}/${pathP}`);
+      handleFirestoreError(error, OperationType.UPDATE, 'transactions/parcelas');
     }
   },
 
