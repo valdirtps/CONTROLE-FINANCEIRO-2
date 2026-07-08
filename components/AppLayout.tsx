@@ -259,11 +259,17 @@ export function AppLayout({ children }: AppLayoutProps) {
             FINANCE<span className="text-emerald-500">PRO</span>
           </h1>
           <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-slate-100 rounded-full text-[10px] font-black text-slate-500 mb-6 uppercase tracking-wider">
-            SISTEMA ATUALIZADO <span className="text-emerald-500">•</span> v1.2.1
+            SISTEMA ATUALIZADO <span className="text-emerald-500">•</span> v1.2.2
           </div>
-          <p className="text-slate-600 mb-6 font-medium">
-            {isRegistering ? 'Crie sua conta administrativa' : 'Bem-vindo! Faça login para acessar o sistema.'}
+          <p className="text-slate-600 mb-8 font-medium">
+            {isRegistering ? 'Crie sua conta administrativa' : 'Acesse sua conta para gerenciar suas finanças.'}
           </p>
+
+          <div className="text-left mb-4">
+            <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest px-1">
+              {isRegistering ? 'Cadastro de Usuário' : 'Acesso por Email'}
+            </h3>
+          </div>
 
           <form onSubmit={handleAuth} className="space-y-4 mb-6">
             {isRegistering && (
