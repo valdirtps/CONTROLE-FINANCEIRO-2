@@ -255,9 +255,12 @@ export function AppLayout({ children }: AppLayoutProps) {
           <div className="w-20 h-20 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-8">
             <Lock className="text-emerald-500" size={40} />
           </div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tighter mb-4">
+          <h1 className="text-3xl font-black text-slate-900 tracking-tighter mb-1">
             FINANCE<span className="text-emerald-500">PRO</span>
           </h1>
+          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-slate-100 rounded-full text-[10px] font-black text-slate-500 mb-6 uppercase tracking-wider">
+            SISTEMA ATUALIZADO <span className="text-emerald-500">•</span> v1.2.1
+          </div>
           <p className="text-slate-600 mb-6 font-medium">
             {isRegistering ? 'Crie sua conta administrativa' : 'Bem-vindo! Faça login para acessar o sistema.'}
           </p>
