@@ -1,5 +1,5 @@
-import { initializeApp } from "firebase/app";
-import { initializeFirestore, enableIndexedDbPersistence } from "firebase/firestore";
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeFirestore, getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import config from "../firebase-applet-config.json";
 
@@ -12,13 +12,21 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || config.appId,
 };
 
-const app = initializeApp(firebaseConfig);
-export const db = initializeFirestore(app, {
-  experimentalForceLongPolling: true,
-}, config.firestoreDatabaseId || "(default)");
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+
+let dbInstance;
+try {
+  dbInstance = initializeFirestore(app, {
+    experimentalForceLongPolling: true,
+  }, config.firestoreDatabaseId || "(default)");
+} catch (e) {
+  dbInstance = getFirestore(app, config.firestoreDatabaseId || "(default)");
+}
+
+export const db = dbInstance;
 export const auth = getAuth(app);
 
-// Enable offline persistence
+// Enable offline persistence safely
 if (typeof window !== "undefined") {
   enableIndexedDbPersistence(db).catch((err) => {
     if (err.code === 'failed-precondition') {

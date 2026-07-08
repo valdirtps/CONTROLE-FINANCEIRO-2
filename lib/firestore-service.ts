@@ -98,7 +98,7 @@ export const FirestoreService = {
   getDevedores: (callback: (data: Devedor[]) => void) => {
     const uid = auth.currentUser?.uid;
     if (!uid) return () => {};
-    const q = collection(db, 'debtors');
+    const q = query(collection(db, 'debtors'), where('userId', '==', uid));
     return onSnapshot(q, (s) => {
       callback(s.docs.map(d => ({ id: d.id, ...d.data() } as Devedor)));
     }, (error) => {
@@ -135,7 +135,7 @@ export const FirestoreService = {
   getContas: (callback: (data: Conta[]) => void) => {
     const uid = auth.currentUser?.uid;
     if (!uid) return () => {};
-    const q = collection(db, 'accounts');
+    const q = query(collection(db, 'accounts'), where('userId', '==', uid));
     return onSnapshot(q, (s) => {
       callback(s.docs.map(d => ({ id: d.id, ...d.data() } as Conta)));
     }, (error) => {
@@ -172,7 +172,7 @@ export const FirestoreService = {
   getTipos: (callback: (data: TipoLancamento[]) => void) => {
     const uid = auth.currentUser?.uid;
     if (!uid) return () => {};
-    const q = collection(db, 'launchTypes');
+    const q = query(collection(db, 'launchTypes'), where('userId', '==', uid));
     return onSnapshot(q, (s) => {
       callback(s.docs.map(d => ({ id: d.id, ...d.data() } as TipoLancamento)));
     }, (error) => {
@@ -209,7 +209,7 @@ export const FirestoreService = {
   getLancamentos: (callback: (data: Lancamento[]) => void) => {
     const uid = auth.currentUser?.uid;
     if (!uid) return () => {};
-    const q = collection(db, 'transactions');
+    const q = query(collection(db, 'transactions'), where('userId', '==', uid));
     return onSnapshot(q, (s) => {
       callback(s.docs.map(d => ({ id: d.id, ...d.data() } as Lancamento)));
     }, (error) => {
@@ -219,7 +219,7 @@ export const FirestoreService = {
   getParcelas: (callback: (data: Parcela[]) => void) => {
     const uid = auth.currentUser?.uid;
     if (!uid) return () => {};
-    const q = collection(db, 'parcelas');
+    const q = query(collection(db, 'parcelas'), where('userId', '==', uid));
     return onSnapshot(q, (s) => {
       callback(s.docs.map(d => ({ id: d.id, ...d.data() } as Parcela)));
     }, (error) => {
