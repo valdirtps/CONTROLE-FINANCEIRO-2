@@ -71,7 +71,16 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     const unsubParcelas = FirestoreService.getParcelas(setParcelas);
     
     FirestoreService.getAdmin().then(data => {
-      setAdmin(data);
+      if (data) {
+        setAdmin(data);
+      } else if (user) {
+        setAdmin({
+          nome: user.displayName || '',
+          email: user.email || '',
+          pix: '',
+          contato: ''
+        } as Administrador);
+      }
       setLoading(false);
     }).catch(error => {
       console.error("Erro ao carregar admin:", error);

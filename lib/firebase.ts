@@ -12,15 +12,17 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || config.appId,
 };
 
+const databaseId = process.env.NEXT_PUBLIC_FIREBASE_DATABASE_ID || config.firestoreDatabaseId || "(default)";
+
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
 let dbInstance;
 try {
   dbInstance = initializeFirestore(app, {
     experimentalForceLongPolling: true,
-  }, config.firestoreDatabaseId || "(default)");
+  }, databaseId);
 } catch (e) {
-  dbInstance = getFirestore(app, config.firestoreDatabaseId || "(default)");
+  dbInstance = getFirestore(app, databaseId);
 }
 
 export const db = dbInstance;
