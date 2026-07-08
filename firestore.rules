@@ -12,28 +12,23 @@ service cloud.firestore {
     }
 
     match /debtors/{id} {
-      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || !('userId' in resource.data));
-      allow write: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid) && request.resource.data.userId == request.auth.uid;
+      allow read, write: if isSignedIn();
     }
 
     match /accounts/{id} {
-      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || !('userId' in resource.data));
-      allow write: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid) && request.resource.data.userId == request.auth.uid;
+      allow read, write: if isSignedIn();
     }
 
     match /launchTypes/{id} {
-      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || !('userId' in resource.data));
-      allow write: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid) && request.resource.data.userId == request.auth.uid;
+      allow read, write: if isSignedIn();
     }
 
     match /transactions/{id} {
-      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || !('userId' in resource.data));
-      allow write: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid) && request.resource.data.userId == request.auth.uid;
+      allow read, write: if isSignedIn();
     }
 
     match /parcelas/{id} {
-      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || !('userId' in resource.data));
-      allow write: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid) && request.resource.data.userId == request.auth.uid;
+      allow read, write: if isSignedIn();
     }
 
     match /{document=**} {

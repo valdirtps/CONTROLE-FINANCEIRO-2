@@ -22,21 +22,25 @@ export default function ConsultaADMPage() {
     // Always include current month
     months.add(format(new Date(), 'yyyy-MM'));
     
-    allLancamentosCompletos.forEach(p => {
-      const date = parseISO(p.dataVencimento);
-      months.add(format(date, 'yyyy-MM'));
+    (allLancamentosCompletos || []).forEach(p => {
+      if (p && p.dataVencimento) {
+        const date = parseISO(p.dataVencimento);
+        months.add(format(date, 'yyyy-MM'));
+      }
     });
     return Array.from(months).sort().reverse();
   }, [allLancamentosCompletos]);
 
   const filteredData = useMemo(() => {
-    if (!selectedVencimento) return [];
+    if (!selectedVencimento || !selectedVencimento.includes('-')) return [];
     
     const [year, month] = selectedVencimento.split('-').map(Number);
+    if (isNaN(year) || isNaN(month)) return [];
     const start = startOfMonth(new Date(year, month - 1));
     const end = endOfMonth(new Date(year, month - 1));
 
-    return allLancamentosCompletos.filter(p => {
+    return (allLancamentosCompletos || []).filter(p => {
+      if (!p || !p.dataVencimento) return false;
       const date = parseISO(p.dataVencimento);
       const matchesVencimento = isWithinInterval(date, { start, end });
       const matchesConta = selectedConta === 'todos' || p.contaId === selectedConta;
@@ -44,7 +48,7 @@ export default function ConsultaADMPage() {
       const hasValue = p.valorTotal !== 0;
       
       return matchesVencimento && matchesConta && isDebito && hasValue && !p.isDV;
-    }).sort((a, b) => a.dataVencimento.localeCompare(b.dataVencimento));
+    }).sort((a, b) => (a.dataVencimento || '').localeCompare(b.dataVencimento || ''));
   }, [allLancamentosCompletos, selectedVencimento, selectedConta]);
 
   if (loading) {
@@ -79,6 +83,7 @@ export default function ConsultaADMPage() {
                 className="pl-10 pr-10 py-3 bg-white border border-slate-200 rounded-2xl text-xs font-bold uppercase tracking-widest outline-none appearance-none cursor-pointer focus:ring-2 focus:ring-emerald-500/20"
               >
                 {availableVencimentos.map(v => {
+                  if (!v || !v.includes('-')) return null;
                   const [y, m] = v.split('-');
                   const date = new Date(Number(y), Number(m) - 1);
                   return (

@@ -28,8 +28,8 @@ export default function ConsultaDevedoresPage() {
     const currencyFormatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
     const total = filteredData.reduce((acc, curr) => acc + curr.valorDevedor, 0);
     
-    const [year, month] = selectedVencimento.split('-').map(Number);
-    const dateRef = new Date(year, month - 1);
+    const [year, month] = (selectedVencimento || '').split('-').map(Number);
+    const dateRef = !isNaN(year) && !isNaN(month) ? new Date(year, month - 1) : new Date();
     
     let message = `*EXTRATO DE VALORES A PAGAR*\n`;
     message += `*Devedor:* ${devedor.nome.toUpperCase()}\n`;
@@ -61,8 +61,8 @@ export default function ConsultaDevedoresPage() {
     // Always include current month
     months.add(format(new Date(), 'yyyy-MM'));
     
-    allLancamentosCompletos.forEach(p => {
-      if (p.valorDevedor !== 0) {
+    (allLancamentosCompletos || []).forEach(p => {
+      if (p && p.valorDevedor !== 0 && p.dataVencimento) {
         const date = parseISO(p.dataVencimento);
         months.add(format(date, 'yyyy-MM'));
       }
@@ -72,18 +72,20 @@ export default function ConsultaDevedoresPage() {
 
 
   const filteredData = useMemo(() => {
-    if (!selectedVencimento) return [];
+    if (!selectedVencimento || !selectedVencimento.includes('-')) return [];
     
     const [year, month] = selectedVencimento.split('-').map(Number);
+    if (isNaN(year) || isNaN(month)) return [];
     const start = startOfMonth(new Date(year, month - 1));
     const end = endOfMonth(new Date(year, month - 1));
 
-    return allLancamentosCompletos.filter(p => {
+    return (allLancamentosCompletos || []).filter(p => {
+      if (!p || !p.dataVencimento) return false;
       const date = parseISO(p.dataVencimento);
       const matchesVencimento = p.valorDevedor !== 0 && isWithinInterval(date, { start, end });
       const matchesDevedor = selectedDevedor === 'todos' || p.devedorId === selectedDevedor;
       return matchesVencimento && matchesDevedor;
-    }).sort((a, b) => a.dataVencimento.localeCompare(b.dataVencimento));
+    }).sort((a, b) => (a.dataVencimento || '').localeCompare(b.dataVencimento || ''));
   }, [allLancamentosCompletos, selectedVencimento, selectedDevedor]);
 
   if (loading) {
@@ -115,6 +117,7 @@ export default function ConsultaDevedoresPage() {
               >
                 {availableVencimentos.length === 0 && <option value="">Nenhum vencimento</option>}
                 {availableVencimentos.map(v => {
+                  if (!v || !v.includes('-')) return null;
                   const [y, m] = v.split('-');
                   const date = new Date(Number(y), Number(m) - 1);
                   return (

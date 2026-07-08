@@ -98,17 +98,9 @@ export const FirestoreService = {
   getDevedores: (callback: (data: Devedor[]) => void) => {
     const uid = auth.currentUser?.uid;
     if (!uid) return () => {};
-    // Fetch all to support legacy data migration
-    return onSnapshot(collection(db, 'debtors'), (s) => {
-      const docs = s.docs.map(d => {
-        const data = d.data();
-        // Auto-migrate legacy data
-        if (!data.userId) {
-          updateDoc(d.ref, { userId: uid }).catch(console.error);
-        }
-        return { id: d.id, ...data } as Devedor;
-      }).filter(d => d.userId === uid || !d.userId);
-      callback(docs);
+    const q = collection(db, 'debtors');
+    return onSnapshot(q, (s) => {
+      callback(s.docs.map(d => ({ id: d.id, ...d.data() } as Devedor)));
     }, (error) => {
       handleFirestoreError(error, OperationType.LIST, 'debtors');
     });
@@ -143,15 +135,9 @@ export const FirestoreService = {
   getContas: (callback: (data: Conta[]) => void) => {
     const uid = auth.currentUser?.uid;
     if (!uid) return () => {};
-    return onSnapshot(collection(db, 'accounts'), (s) => {
-      const docs = s.docs.map(d => {
-        const data = d.data();
-        if (!data.userId) {
-          updateDoc(d.ref, { userId: uid }).catch(console.error);
-        }
-        return { id: d.id, ...data } as Conta;
-      }).filter(d => d.userId === uid || !d.userId);
-      callback(docs);
+    const q = collection(db, 'accounts');
+    return onSnapshot(q, (s) => {
+      callback(s.docs.map(d => ({ id: d.id, ...d.data() } as Conta)));
     }, (error) => {
       handleFirestoreError(error, OperationType.LIST, 'accounts');
     });
@@ -186,15 +172,9 @@ export const FirestoreService = {
   getTipos: (callback: (data: TipoLancamento[]) => void) => {
     const uid = auth.currentUser?.uid;
     if (!uid) return () => {};
-    return onSnapshot(collection(db, 'launchTypes'), (s) => {
-      const docs = s.docs.map(d => {
-        const data = d.data();
-        if (!data.userId) {
-          updateDoc(d.ref, { userId: uid }).catch(console.error);
-        }
-        return { id: d.id, ...data } as TipoLancamento;
-      }).filter(d => d.userId === uid || !d.userId);
-      callback(docs);
+    const q = collection(db, 'launchTypes');
+    return onSnapshot(q, (s) => {
+      callback(s.docs.map(d => ({ id: d.id, ...d.data() } as TipoLancamento)));
     }, (error) => {
       handleFirestoreError(error, OperationType.LIST, 'launchTypes');
     });
@@ -229,15 +209,9 @@ export const FirestoreService = {
   getLancamentos: (callback: (data: Lancamento[]) => void) => {
     const uid = auth.currentUser?.uid;
     if (!uid) return () => {};
-    return onSnapshot(collection(db, 'transactions'), (s) => {
-      const docs = s.docs.map(d => {
-        const data = d.data();
-        if (!data.userId) {
-          updateDoc(d.ref, { userId: uid }).catch(console.error);
-        }
-        return { id: d.id, ...data } as Lancamento;
-      }).filter(d => d.userId === uid || !d.userId);
-      callback(docs);
+    const q = collection(db, 'transactions');
+    return onSnapshot(q, (s) => {
+      callback(s.docs.map(d => ({ id: d.id, ...d.data() } as Lancamento)));
     }, (error) => {
       handleFirestoreError(error, OperationType.LIST, 'transactions');
     });
@@ -245,15 +219,9 @@ export const FirestoreService = {
   getParcelas: (callback: (data: Parcela[]) => void) => {
     const uid = auth.currentUser?.uid;
     if (!uid) return () => {};
-    return onSnapshot(collection(db, 'parcelas'), (s) => {
-      const docs = s.docs.map(d => {
-        const data = d.data();
-        if (!data.userId) {
-          updateDoc(d.ref, { userId: uid }).catch(console.error);
-        }
-        return { id: d.id, ...data } as Parcela;
-      }).filter(d => d.userId === uid || !d.userId);
-      callback(docs);
+    const q = collection(db, 'parcelas');
+    return onSnapshot(q, (s) => {
+      callback(s.docs.map(d => ({ id: d.id, ...d.data() } as Parcela)));
     }, (error) => {
       handleFirestoreError(error, OperationType.LIST, 'parcelas');
     });
@@ -378,6 +346,8 @@ export const FirestoreService = {
   },
 
   deleteLancamento: async (id: string) => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
     const pathL = `transactions/${id}`;
     const pathP = 'parcelas';
     try {

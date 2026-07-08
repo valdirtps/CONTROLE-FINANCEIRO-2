@@ -81,10 +81,14 @@ export function NovoLancamentoModal({ isOpen, onClose, editingId }: NovoLancamen
     if (editingId && isOpen) {
       const lancamento = lancamentos.find(l => l.id === editingId);
       if (lancamento) {
-        const installments = parcelas.filter(p => p.lancamentoId === editingId);
+        const installments = (parcelas || []).filter(p => p && p.lancamentoId === editingId);
         const firstVencimento = installments.length > 0 
-          ? installments.sort((a, b) => new Date(a.dataVencimento + 'T12:00:00').getTime() - new Date(b.dataVencimento + 'T12:00:00').getTime())[0].dataVencimento 
-          : lancamento.dataCompra;
+          ? (installments.sort((a, b) => {
+              const dateA = a.dataVencimento ? new Date(a.dataVencimento + 'T12:00:00').getTime() : 0;
+              const dateB = b.dataVencimento ? new Date(b.dataVencimento + 'T12:00:00').getTime() : 0;
+              return dateA - dateB;
+            })[0]?.dataVencimento || lancamento.dataCompra || new Date().toISOString().split('T')[0])
+          : (lancamento.dataCompra || new Date().toISOString().split('T')[0]);
 
         reset({
           referente: lancamento.referente,

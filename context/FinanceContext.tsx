@@ -96,45 +96,48 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
 
     const normalize = (str: string) => str.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
 
-    return parcelas.map(p => {
-      const l = lancamentosMap.get(p.lancamentoId);
-      const c = l ? contasMap.get(l.contaId) : undefined;
-      const t = l ? tiposMap.get(l.tipoLancamentoId) : undefined;
-      const d = l?.devedorId ? devedoresMap.get(l.devedorId) : undefined;
+    return (parcelas || [])
+      .filter(p => p && typeof p.dataVencimento === 'string' && p.dataVencimento.trim() !== '')
+      .map(p => {
+        const l = lancamentosMap.get(p.lancamentoId);
+        const c = l ? contasMap.get(l.contaId) : undefined;
+        const t = l ? tiposMap.get(l.tipoLancamentoId) : undefined;
+        const d = l?.devedorId ? devedoresMap.get(l.devedorId) : undefined;
 
-      const isDV = t?.dv === true;
-      
-      const valorParcelaTotal = l ? (l.valorTotal / l.numParcelas) : (p.valorAdministrador + p.valorDevedor);
-      let finalValorDevedor = p.valorDevedor;
-      let finalValorAdministrador = p.valorAdministrador;
+        const isDV = t?.dv === true;
+        
+        const valorParcelaTotal = l ? (l.valorTotal / l.numParcelas) : (p.valorAdministrador + p.valorDevedor);
+        let finalValorDevedor = p.valorDevedor;
+        let finalValorAdministrador = p.valorAdministrador;
 
-      if (isDV) {
-        finalValorDevedor = t?.flagMatematica === '+' ? -Math.abs(valorParcelaTotal) : Math.abs(valorParcelaTotal);
-        finalValorAdministrador = 0;
-      }
+        if (isDV) {
+          finalValorDevedor = t?.flagMatematica === '+' ? -Math.abs(valorParcelaTotal) : Math.abs(valorParcelaTotal);
+          finalValorAdministrador = 0;
+        }
 
-      return {
-        ...p,
-        valorAdministrador: finalValorAdministrador,
-        valorDevedor: finalValorDevedor,
-        referente: l?.referente || '',
-        contaNome: c?.nome || 'N/A',
-        contaId: l?.contaId || '',
-        tipoNome: t?.nome || 'N/A',
-        flagMatematica: t?.flagMatematica || '+',
-        devedorNome: d?.nome,
-        devedorId: l?.devedorId,
-        dataCompra: l?.dataCompra,
-        valorTotal: valorParcelaTotal,
-        valorTotalLancamento: l?.valorTotal || 0,
-        valorDebitoDevedor: l?.valorDebitoDevedor,
-        isDV
-      };
-    });
+        return {
+          ...p,
+          valorAdministrador: finalValorAdministrador,
+          valorDevedor: finalValorDevedor,
+          referente: l?.referente || '',
+          contaNome: c?.nome || 'N/A',
+          contaId: l?.contaId || '',
+          tipoNome: t?.nome || 'N/A',
+          flagMatematica: t?.flagMatematica || '+',
+          devedorNome: d?.nome,
+          devedorId: l?.devedorId,
+          dataCompra: l?.dataCompra,
+          valorTotal: valorParcelaTotal,
+          valorTotalLancamento: l?.valorTotal || 0,
+          valorDebitoDevedor: l?.valorDebitoDevedor,
+          isDV
+        };
+      });
   }, [parcelas, lancamentos, contas, tipos, devedores]);
 
   const lancamentosCompletos = React.useMemo(() => {
     return allLancamentosCompletos.filter(p => {
+      if (!p.dataVencimento || typeof p.dataVencimento !== 'string') return false;
       const date = parseISO(p.dataVencimento);
       return isWithinInterval(date, {
         start: startOfMonth(currentMonth),
