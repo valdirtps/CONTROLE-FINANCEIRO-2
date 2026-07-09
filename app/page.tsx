@@ -83,7 +83,8 @@ export default function Dashboard() {
       }
 
       const tipoNome = l.tipoNome || '';
-      const isRepos = tipoNome.trim().toUpperCase() === 'REPOS';
+      // Verifica se é categoria de REPOSIÇÃO (ignora no total de receita do dashboard conforme solicitado)
+      const isRepos = tipoNome.trim().toUpperCase().includes('REPOS');
       const valorParaDashboard = (Number(l.valorAdministrador) || 0) + (Number(l.valorDevedor) || 0);
 
       if (l.flagMatematica === '+') {
@@ -95,7 +96,7 @@ export default function Dashboard() {
       }
       current.credito += (Number(l.valorDevedor) || 0);
       
-      // O saldo deve refletir a posição líquida do administrador
+      // O saldo deve refletir a posição líquida do administrador (incluindo reposições no saldo bancário)
       const share = l.flagMatematica === '+' ? (Number(l.valorAdministrador) || 0) : -(Number(l.valorAdministrador) || 0);
       current.saldo += share;
     });
