@@ -78,20 +78,20 @@ export default function Dashboard() {
         monthsMap.set(monthKey, current);
       }
 
-      const valorParcela = (l.valorAdministrador || 0) + (l.valorDevedor || 0);
-      const isRepos = l.tipoNome?.toUpperCase() === 'REPOS';
+      const isRepos = l.tipoNome?.trim().toUpperCase() === 'REPOS';
+      const valorParaDashboard = (l.valorAdministrador || 0) + (l.valorDevedor || 0);
 
       if (l.flagMatematica === '+') {
         if (!isRepos) {
-          current.receita += valorParcela;
+          current.receita += valorParaDashboard;
         }
       } else {
-        current.despesa += valorParcela;
+        current.despesa += valorParaDashboard;
       }
-      current.credito += l.valorDevedor;
+      current.credito += (l.valorDevedor || 0);
       
       // O saldo deve refletir a posição líquida do administrador
-      const share = l.flagMatematica === '+' ? l.valorAdministrador : -l.valorAdministrador;
+      const share = l.flagMatematica === '+' ? (l.valorAdministrador || 0) : -(l.valorAdministrador || 0);
       current.saldo += share;
     });
 
