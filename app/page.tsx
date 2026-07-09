@@ -60,7 +60,11 @@ export default function Dashboard() {
     }
 
     allLancamentosCompletos.forEach(l => {
+      if (!l.dataVencimento) return;
+      
       const date = parseISO(l.dataVencimento);
+      if (isNaN(date.getTime())) return;
+
       const monthKey = format(date, 'yyyy-MM');
       let current = monthsMap.get(monthKey);
       
@@ -78,8 +82,9 @@ export default function Dashboard() {
         monthsMap.set(monthKey, current);
       }
 
-      const isRepos = l.tipoNome?.trim().toUpperCase() === 'REPOS';
-      const valorParaDashboard = (l.valorAdministrador || 0) + (l.valorDevedor || 0);
+      const tipoNome = l.tipoNome || '';
+      const isRepos = tipoNome.trim().toUpperCase() === 'REPOS';
+      const valorParaDashboard = (Number(l.valorAdministrador) || 0) + (Number(l.valorDevedor) || 0);
 
       if (l.flagMatematica === '+') {
         if (!isRepos) {
@@ -88,10 +93,10 @@ export default function Dashboard() {
       } else {
         current.despesa += valorParaDashboard;
       }
-      current.credito += (l.valorDevedor || 0);
+      current.credito += (Number(l.valorDevedor) || 0);
       
       // O saldo deve refletir a posição líquida do administrador
-      const share = l.flagMatematica === '+' ? (l.valorAdministrador || 0) : -(l.valorAdministrador || 0);
+      const share = l.flagMatematica === '+' ? (Number(l.valorAdministrador) || 0) : -(Number(l.valorAdministrador) || 0);
       current.saldo += share;
     });
 
