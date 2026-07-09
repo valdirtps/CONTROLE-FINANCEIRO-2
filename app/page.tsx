@@ -32,10 +32,10 @@ export default function Dashboard() {
     }>();
 
     const today = startOfMonth(new Date());
-    const baselineDate = new Date();
-    baselineDate.setMonth(baselineDate.getMonth() - 3);
-    let minDate = startOfMonth(baselineDate);
-    
+    const futureLimit = new Date(today);
+    futureLimit.setMonth(futureLimit.getMonth() + 12); 
+
+    let minDate = new Date(today);
     allLancamentosCompletos.forEach(l => {
       const date = parseISO(l.dataVencimento);
       const start = startOfMonth(date);
@@ -43,7 +43,7 @@ export default function Dashboard() {
     });
 
     let currentIter = new Date(minDate);
-    while (currentIter <= today) {
+    while (currentIter <= futureLimit) {
       const monthKey = format(currentIter, 'yyyy-MM');
       const displayDate = new Date(currentIter);
       displayDate.setDate(5);
@@ -78,18 +78,23 @@ export default function Dashboard() {
         monthsMap.set(monthKey, current);
       }
 
+      const valorParcela = (l.valorAdministrador || 0) + (l.valorDevedor || 0);
+
       if (l.flagMatematica === '+') {
-        current.receita += l.valorAdministrador;
+        current.receita += valorParcela;
       } else {
-        current.despesa += l.valorAdministrador;
+        current.despesa += valorParcela;
       }
       current.credito += l.valorDevedor;
-      current.saldo = current.receita - current.despesa;
+      
+      // O saldo deve refletir a posição líquida do administrador
+      const share = l.flagMatematica === '+' ? l.valorAdministrador : -l.valorAdministrador;
+      current.saldo += share;
     });
 
     return Array.from(monthsMap.values())
-      .filter(summary => summary.dateObj <= today)
-      .sort((a, b) => b.dateObj.getTime() - a.dateObj.getTime());
+      .filter(summary => summary.dateObj >= today)
+      .sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime());
   }, [allLancamentosCompletos]);
 
   return (
@@ -125,11 +130,11 @@ export default function Dashboard() {
             <table className="w-full text-left border-collapse">
               <thead className="sticky top-0 z-10 bg-white shadow-[0_1px_0_0_rgba(0,0,0,0.05)]">
                 <tr className="bg-slate-50/80 backdrop-blur-sm">
-                  <th className="px-6 py-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">Data do Vcto</th>
-                  <th className="px-6 py-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Receita</th>
-                  <th className="px-6 py-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Despesas</th>
-                  <th className="px-6 py-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Valores a Receber</th>
-                  <th className="px-6 py-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Saldo Total</th>
+                  <th className="px-6 py-2 text-[11px] font-black text-slate-400 uppercase tracking-widest">Data do Vcto</th>
+                  <th className="px-6 py-2 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">Receita</th>
+                  <th className="px-6 py-2 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">Valores a Pagar</th>
+                  <th className="px-6 py-2 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">Valores a Receber</th>
+                  <th className="px-6 py-2 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">Saldo Líquido</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
@@ -138,28 +143,28 @@ export default function Dashboard() {
                     key={index} 
                     className="hover:bg-slate-50/50 transition-colors group"
                   >
-                    <td className="px-6 py-0.5">
-                      <span className="text-xs font-black text-slate-900 capitalize group-hover:text-emerald-600 transition-colors">
+                    <td className="px-6 py-1.5">
+                      <span className="text-sm font-black text-slate-900 capitalize group-hover:text-emerald-600 transition-colors">
                         {summary.vencimento}
                       </span>
                     </td>
-                    <td className="px-6 py-0.5 text-right">
-                      <span className="text-xs font-bold text-emerald-600">
+                    <td className="px-6 py-1.5 text-right">
+                      <span className="text-sm font-bold text-emerald-600">
                         {formatCurrency(summary.receita)}
                       </span>
                     </td>
-                    <td className="px-6 py-0.5 text-right">
-                      <span className="text-xs font-bold text-rose-500">
+                    <td className="px-6 py-1.5 text-right">
+                      <span className="text-sm font-bold text-rose-500">
                         {formatCurrency(summary.despesa)}
                       </span>
                     </td>
-                    <td className="px-6 py-0.5 text-right">
-                      <span className="text-xs font-bold text-amber-500">
+                    <td className="px-6 py-1.5 text-right">
+                      <span className="text-sm font-bold text-amber-500">
                         {formatCurrency(summary.credito)}
                       </span>
                     </td>
-                    <td className="px-6 py-0.5 text-right">
-                      <div className={`inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-[10px] font-black ${
+                    <td className="px-6 py-1.5 text-right">
+                      <div className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black ${
                         summary.saldo >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
                       }`}>
                         {formatCurrency(summary.saldo)}

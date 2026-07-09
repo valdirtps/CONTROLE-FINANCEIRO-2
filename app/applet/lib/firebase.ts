@@ -1,7 +1,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { initializeFirestore, getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import config from "../firebase-applet-config.json";
+import config from "@/firebase-applet-config.json";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || config.apiKey,
@@ -12,16 +12,11 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || config.appId,
 };
 
-// Prioritize config.firestoreDatabaseId and filter out NEXT_PUBLIC_FIREBASE_DATABASE_ID if it looks like an App ID
-const databaseId = 
-  config.firestoreDatabaseId || 
-  (process.env.NEXT_PUBLIC_FIREBASE_DATABASE_ID && !process.env.NEXT_PUBLIC_FIREBASE_DATABASE_ID.includes(":") 
-    ? process.env.NEXT_PUBLIC_FIREBASE_DATABASE_ID 
-    : "(default)");
+const databaseId = process.env.NEXT_PUBLIC_FIREBASE_DATABASE_ID || config.firestoreDatabaseId || "(default)";
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-// Use experimentalForceLongPolling to ensure connectivity in the preview iframe
+// Using initializeFirestore with experimentalForceLongPolling to prevent connection issues in the preview environment
 let dbInstance;
 try {
   dbInstance = initializeFirestore(app, {

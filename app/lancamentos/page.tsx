@@ -134,7 +134,7 @@ export default function LancamentosPage() {
           </div>
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center justify-center gap-1.5 px-4 py-2 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-all font-bold text-xs shadow-lg shadow-emerald-500/10 active:scale-95 cursor-pointer uppercase tracking-wider"
+            className="flex items-center justify-center gap-1.5 px-4 py-2 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-all font-bold text-sm shadow-lg shadow-emerald-500/10 active:scale-95 cursor-pointer uppercase tracking-wider"
           >
             <Plus size={16} />
             <span>Novo Lançamento</span>
@@ -198,7 +198,7 @@ export default function LancamentosPage() {
             <select
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="w-full pl-14 pr-12 py-3 bg-slate-50 border-none rounded-2xl text-xs font-black text-slate-600 focus:ring-2 focus:ring-emerald-500/20 transition-all appearance-none cursor-pointer"
+              className="w-full pl-14 pr-12 py-3 bg-slate-50 border-none rounded-2xl text-sm font-black text-slate-600 focus:ring-2 focus:ring-emerald-500/20 transition-all appearance-none cursor-pointer"
             >
               <option value="todos">TODOS OS VENCIMENTOS</option>
               {uniqueDates.map(date => (
@@ -221,7 +221,7 @@ export default function LancamentosPage() {
               placeholder="FILTRAR POR REFERENTE..."
               value={referenteTerm}
               onChange={(e) => setReferenteTerm(e.target.value)}
-              className="w-full pl-14 pr-6 py-3 bg-slate-50 border-none rounded-2xl text-xs font-black text-slate-600 placeholder:text-slate-300 focus:ring-2 focus:ring-emerald-500/20 transition-all"
+              className="w-full pl-14 pr-6 py-3 bg-slate-50 border-none rounded-2xl text-sm font-black text-slate-600 placeholder:text-slate-300 focus:ring-2 focus:ring-emerald-500/20 transition-all"
             />
           </div>
 
@@ -238,17 +238,17 @@ export default function LancamentosPage() {
             <table className="w-full text-left border-collapse min-w-[1200px] table-fixed">
               <thead>
                 <tr className="bg-slate-50/50 border-b border-slate-100">
-                  <th className="w-24 px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">Vencimento</th>
-                  <th className="w-24 px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">Categoria</th>
-                  <th className="w-32 px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">Conta</th>
-                  <th className="w-24 px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider text-right">Valor Total</th>
-                  <th className="w-20 px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider text-center">Parcelas</th>
-                  <th className="w-24 px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider text-right">Valor Parcela</th>
-                  <th className="px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">Referente</th>
-                  <th className="w-32 px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">Devedor</th>
-                  <th className="w-24 px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider text-right">Valor DEV</th>
-                  <th className="w-24 px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">Data da Compra</th>
-                  <th className="w-20 px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider text-center">Ações</th>
+                  <th className="w-24 px-4 py-2 text-[12px] font-black text-slate-400 uppercase tracking-wider">Vencimento</th>
+                  <th className="w-24 px-4 py-2 text-[12px] font-black text-slate-400 uppercase tracking-wider">Categoria</th>
+                  <th className="w-32 px-4 py-2 text-[12px] font-black text-slate-400 uppercase tracking-wider">Conta</th>
+                  <th className="w-24 px-4 py-2 text-[12px] font-black text-slate-400 uppercase tracking-wider text-right">Valor Total</th>
+                  <th className="w-20 px-4 py-2 text-[12px] font-black text-slate-400 uppercase tracking-wider text-center">Parcelas</th>
+                  <th className="w-24 px-4 py-2 text-[12px] font-black text-slate-400 uppercase tracking-wider text-right">Valor Parcela</th>
+                  <th className="px-4 py-2 text-[12px] font-black text-slate-400 uppercase tracking-wider">Referente</th>
+                  <th className="w-32 px-4 py-2 text-[12px] font-black text-slate-400 uppercase tracking-wider">Devedor</th>
+                  <th className="w-24 px-4 py-2 text-[12px] font-black text-slate-400 uppercase tracking-wider text-right">Valor DEV</th>
+                  <th className="w-24 px-4 py-2 text-[12px] font-black text-slate-400 uppercase tracking-wider">Data da Compra</th>
+                  <th className="w-20 px-4 py-2 text-[12px] font-black text-slate-400 uppercase tracking-wider text-center">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
@@ -257,71 +257,71 @@ export default function LancamentosPage() {
                     <td colSpan={11} className="px-4 py-20 text-center">
                       <div className="flex flex-col items-center gap-2 text-slate-400">
                         <Calendar size={48} className="opacity-20" />
-                        <p className="font-bold">Nenhum lançamento encontrado</p>
+                        <p className="font-bold text-base">Nenhum lançamento encontrado</p>
                       </div>
                     </td>
                   </tr>
                 ) : (
                   filteredData.map((item) => (
                     <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
-                      <td className="px-4 py-0.5">
-                        <span className="text-xs font-black text-slate-900 whitespace-nowrap">
+                      <td className="px-4 py-2">
+                        <span className="text-sm font-black text-slate-900 whitespace-nowrap">
                           {item.dataVencimento ? format(new Date(item.dataVencimento + 'T12:00:00'), 'dd/MM/yyyy') : '-'}
                         </span>
                       </td>
-                      <td className="px-4 py-0.5">
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider whitespace-nowrap ${
+                      <td className="px-4 py-2">
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black uppercase tracking-wider whitespace-nowrap ${
                           item.flagMatematica === '+' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
                         }`}>
-                          {item.flagMatematica === '+' ? <ArrowUpCircle size={10} /> : <ArrowDownCircle size={10} />}
+                          {item.flagMatematica === '+' ? <ArrowUpCircle size={12} /> : <ArrowDownCircle size={12} />}
                           {item.tipoNome}
                         </span>
                       </td>
-                      <td className="px-4 py-0.5">
-                        <div className="flex items-center gap-1.5 text-xs font-bold text-slate-600 truncate">
-                          <Wallet size={12} className="text-slate-400 shrink-0" />
+                      <td className="px-4 py-2">
+                        <div className="flex items-center gap-1.5 text-sm font-bold text-slate-600 truncate">
+                          <Wallet size={14} className="text-slate-400 shrink-0" />
                           <span className="truncate">{item.contaNome}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-0.5 text-right">
-                        <span className="text-xs font-black text-slate-900 whitespace-nowrap">
+                      <td className="px-4 py-2 text-right">
+                        <span className="text-sm font-black text-slate-900 whitespace-nowrap">
                           {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.valorTotal)}
                         </span>
                       </td>
-                      <td className="px-4 py-0.5 text-center">
-                        <span className="text-[10px] font-black text-slate-500 bg-slate-100 px-2 py-0.5 rounded-lg">
+                      <td className="px-4 py-2 text-center">
+                        <span className="text-xs font-black text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">
                           {item.numParcelas}
                         </span>
                       </td>
-                      <td className="px-4 py-0.5 text-right">
-                        <span className="text-xs font-bold text-slate-600 whitespace-nowrap">
+                      <td className="px-4 py-2 text-right">
+                        <span className="text-sm font-bold text-slate-600 whitespace-nowrap">
                           {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.valorParcela)}
                         </span>
                       </td>
-                      <td className="px-4 py-0.5">
-                        <span className="text-xs font-bold text-slate-900 line-clamp-1 break-all">{item.referente}</span>
+                      <td className="px-4 py-2">
+                        <span className="text-sm font-bold text-slate-900 line-clamp-1 break-all">{item.referente}</span>
                       </td>
-                      <td className="px-4 py-0.5">
+                      <td className="px-4 py-2">
                         {item.devedorNome ? (
-                          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-600 truncate">
-                            <Users size={12} className="text-slate-400 shrink-0" />
+                          <div className="flex items-center gap-1.5 text-sm font-bold text-slate-600 truncate">
+                            <Users size={14} className="text-slate-400 shrink-0" />
                             <span className="truncate">{item.devedorNome}</span>
                           </div>
                         ) : (
-                          <span className="text-slate-300 text-xs">---</span>
+                          <span className="text-slate-300 text-sm">---</span>
                         )}
                       </td>
-                      <td className="px-4 py-0.5 text-right">
-                        <span className="text-xs font-bold text-rose-600 whitespace-nowrap">
+                      <td className="px-4 py-2 text-right">
+                        <span className="text-sm font-bold text-rose-600 whitespace-nowrap">
                           {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.totalDev)}
                         </span>
                       </td>
-                      <td className="px-4 py-0.5">
-                        <span className="text-[10px] font-bold text-slate-500 whitespace-nowrap">
+                      <td className="px-4 py-2">
+                        <span className="text-xs font-bold text-slate-500 whitespace-nowrap">
                           {item.dataCompra ? format(new Date(item.dataCompra + 'T12:00:00'), 'dd/MM/yyyy') : '-'}
                         </span>
                       </td>
-                      <td className="px-4 py-0.5">
+                      <td className="px-4 py-2">
                         <div className="flex items-center justify-center gap-1">
                           <button 
                             onClick={() => handleEdit(item.id)}
