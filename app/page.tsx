@@ -79,9 +79,12 @@ export default function Dashboard() {
       }
 
       const valorParcela = (l.valorAdministrador || 0) + (l.valorDevedor || 0);
+      const isRepos = l.tipoNome?.toUpperCase() === 'REPOS';
 
       if (l.flagMatematica === '+') {
-        current.receita += valorParcela;
+        if (!isRepos) {
+          current.receita += valorParcela;
+        }
       } else {
         current.despesa += valorParcela;
       }
