@@ -78,14 +78,12 @@ export default function ContasPage() {
   };
 
   const handleDelete = async (id: string) => {
-    console.log('Solicitada exclusão da conta ID:', id);
     
     // Check if account is linked to any lancamento
     const linkedLancamentos = lancamentos.filter(l => l.contaId === id);
     const isLinked = linkedLancamentos.length > 0;
     
     if (isLinked) {
-      console.warn(`Conta ${id} vinculada a ${linkedLancamentos.length} lançamentos.`);
       toast.error('Não é possível excluir: existem lançamentos vinculados.', {
         description: `Esta conta está vinculada a ${linkedLancamentos.length} lançamentos. Remova-os primeiro.`
       });
@@ -99,7 +97,6 @@ export default function ContasPage() {
     if (!deleteConfirmId) return;
 
     try {
-      console.log('Executando exclusão no Firestore:', deleteConfirmId);
       await deleteAccount(deleteConfirmId);
       toast.success('Conta excluída com sucesso!');
     } catch (error: any) {
