@@ -80,13 +80,22 @@ export default function Dashboard() {
 
       const valorParcela = (l.valorAdministrador || 0) + (l.valorDevedor || 0);
       const isRepos = l.tipoNome?.toUpperCase() === 'REPOS';
+      
+      const normalizeString = (str: string) => str.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+      const isEmprestimo = l.tipoNome ? (
+        normalizeString(l.tipoNome).includes('EMPRESTIMO') || 
+        normalizeString(l.tipoNome).includes('EMPRESTIMOS') || 
+        normalizeString(l.tipoNome).includes('LOAN')
+      ) : false;
 
       if (l.flagMatematica === '+') {
         if (!isRepos) {
           current.receita += valorParcela;
         }
       } else {
-        current.despesa += valorParcela;
+        if (!isEmprestimo && !l.isDV) {
+          current.despesa += valorParcela;
+        }
       }
       current.credito += l.valorDevedor;
       

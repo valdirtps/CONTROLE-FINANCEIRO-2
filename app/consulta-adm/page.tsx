@@ -47,7 +47,14 @@ export default function ConsultaADMPage() {
       const isDebito = p.flagMatematica === '-';
       const hasValue = p.valorTotal !== 0;
       
-      return matchesVencimento && matchesConta && isDebito && hasValue && !p.isDV;
+      const normalizeString = (str: string) => str.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+      const isEmprestimo = p.tipoNome ? (
+        normalizeString(p.tipoNome).includes('EMPRESTIMO') || 
+        normalizeString(p.tipoNome).includes('EMPRESTIMOS') || 
+        normalizeString(p.tipoNome).includes('LOAN')
+      ) : false;
+
+      return matchesVencimento && matchesConta && isDebito && hasValue && !p.isDV && !isEmprestimo;
     }).sort((a, b) => (a.dataVencimento || '').localeCompare(b.dataVencimento || ''));
   }, [allLancamentosCompletos, selectedVencimento, selectedConta]);
 
