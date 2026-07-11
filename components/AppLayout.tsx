@@ -213,8 +213,13 @@ export function AppLayout({ children }: AppLayoutProps) {
         monthsMap.set(monthKey, current);
       }
 
+      const normalizeString = (str: string) => str.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+      const isReceb = l.tipoNome ? normalizeString(l.tipoNome) === 'RECEB' : false;
+
       if (l.flagMatematica === '+') {
-        current.receita += l.valorAdministrador;
+        if (l.isReceita) {
+          current.receita += l.valorAdministrador;
+        }
       } else {
         current.despesa += l.valorAdministrador;
       }

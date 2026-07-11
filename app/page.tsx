@@ -79,9 +79,10 @@ export default function Dashboard() {
       }
 
       const valorParcela = (l.valorAdministrador || 0) + (l.valorDevedor || 0);
-      const isRepos = l.tipoNome?.toUpperCase() === 'REPOS';
       
       const normalizeString = (str: string) => str.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+      const isReceb = l.tipoNome ? normalizeString(l.tipoNome) === 'RECEB' : false;
+      
       const isEmprestimo = l.tipoNome ? (
         normalizeString(l.tipoNome).includes('EMPRESTIMO') || 
         normalizeString(l.tipoNome).includes('EMPRESTIMOS') || 
@@ -89,7 +90,7 @@ export default function Dashboard() {
       ) : false;
 
       if (l.flagMatematica === '+') {
-        if (!isRepos) {
+        if (l.isReceita) {
           current.receita += valorParcela;
         }
       } else {

@@ -131,6 +131,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
           referente: l?.referente || '',
           contaNome: c?.nome || 'N/A',
           contaId: l?.contaId || '',
+          isReceita: c?.isReceita || false,
           tipoNome: t?.nome || 'N/A',
           flagMatematica: t?.flagMatematica || '+',
           devedorNome: d?.nome,

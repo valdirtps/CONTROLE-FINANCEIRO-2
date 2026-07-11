@@ -22,6 +22,7 @@ export interface Conta {
   userId?: string;
   nome: string;
   descricao: string;
+  isReceita?: boolean;
 }
 
 export interface TipoLancamento {
@@ -65,6 +66,7 @@ export interface LancamentoCompleto extends Parcela {
   referente: string;
   contaNome: string;
   contaId: string;
+  isReceita?: boolean;
   tipoNome: string;
   flagMatematica: '+' | '-';
   devedorNome?: string;

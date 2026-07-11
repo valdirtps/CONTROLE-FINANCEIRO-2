@@ -21,6 +21,7 @@ import { Conta } from '@/types/finance';
 const schema = z.object({
   nome: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres'),
   descricao: z.string().min(5, 'Descrição deve ter pelo menos 5 caracteres'),
+  isReceita: z.boolean().default(false),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -36,9 +37,13 @@ export default function ContasPage() {
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors, isSubmitting }
   } = useForm<FormData>({
-    resolver: zodResolver(schema)
+    resolver: zodResolver(schema),
+    defaultValues: {
+      isReceita: false
+    }
   });
 
   const onSubmit = async (data: FormData) => {
@@ -68,6 +73,7 @@ export default function ContasPage() {
     setEditingId(conta.id);
     setValue('nome', conta.nome);
     setValue('descricao', conta.descricao);
+    setValue('isReceita', conta.isReceita || false);
     setIsModalOpen(true);
   };
 
@@ -133,6 +139,7 @@ export default function ContasPage() {
                 <tr className="bg-slate-50/50 border-b border-slate-100">
                   <th className="px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">Conta</th>
                   <th className="px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">Descrição</th>
+                  <th className="px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider text-center">Receita?</th>
                   <th className="w-20 px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider text-center">Ações</th>
                 </tr>
               </thead>
@@ -159,6 +166,15 @@ export default function ContasPage() {
                       </td>
                       <td className="px-4 py-0.5">
                         <span className="text-xs font-bold text-slate-500 uppercase tracking-tight">{conta.descricao}</span>
+                      </td>
+                      <td className="px-4 py-0.5 text-center">
+                        <div className="flex justify-center">
+                          {conta.isReceita ? (
+                            <div className="bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest">Sim</div>
+                          ) : (
+                            <div className="bg-slate-100 text-slate-400 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest">Não</div>
+                          )}
+                        </div>
                       </td>
                       <td className="px-4 py-0.5">
                         <div className="flex items-center justify-center gap-1">
@@ -250,6 +266,17 @@ export default function ContasPage() {
                         {errors.descricao.message}
                       </p>
                     )}
+                  </div>
+
+                  <div className="flex items-center gap-3 bg-slate-50 p-4 rounded-2xl cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => setValue('isReceita', !watch('isReceita'))}>
+                    <div className={`w-12 h-6 rounded-full transition-all relative ${watch('isReceita') ? 'bg-emerald-500' : 'bg-slate-300'}`}>
+                      <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${watch('isReceita') ? 'left-7' : 'left-1'}`} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-slate-700">Flag Receita</p>
+                      <p className="text-[10px] text-slate-500 font-medium">Contas marcadas serão exibidas no campo RECEITA do dashboard</p>
+                    </div>
+                    <input type="hidden" {...register('isReceita')} />
                   </div>
 
                   <button
