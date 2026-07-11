@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { FirebaseProvider } from "@/components/FirebaseProvider";
 import { FinanceProvider } from "@/context/FinanceContext";
+import { InactivityHandler } from "@/components/InactivityHandler";
 import { Toaster } from "sonner";
 
 const inter = Inter({ 
@@ -25,6 +26,7 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans`}>
         <FirebaseProvider>
           <FinanceProvider>
+            <InactivityHandler />
             {children}
             <Toaster position="top-right" richColors />
           </FinanceProvider>
