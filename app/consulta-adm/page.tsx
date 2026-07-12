@@ -15,6 +15,12 @@ export default function ConsultaADMPage() {
   const { allLancamentosCompletos, contas, admin, loading } = useFinance();
   const [selectedVencimento, setSelectedVencimento] = useState<string>(format(new Date(), 'yyyy-MM'));
   const [selectedConta, setSelectedConta] = useState<string>('todos');
+  const [selectedVctoDia, setSelectedVctoDia] = useState<string>('todos');
+
+  // Reset selectedVctoDia when main filters change
+  React.useEffect(() => {
+    setSelectedVctoDia('todos');
+  }, [selectedVencimento, selectedConta]);
 
   // Extract all unique months from all lancamentos
   const availableVencimentos = useMemo(() => {
@@ -57,6 +63,23 @@ export default function ConsultaADMPage() {
       return matchesVencimento && matchesConta && isDebito && hasValue && !p.isDV && !isEmprestimo;
     }).sort((a, b) => (a.dataVencimento || '').localeCompare(b.dataVencimento || ''));
   }, [allLancamentosCompletos, selectedVencimento, selectedConta]);
+
+  const uniqueDueDates = useMemo(() => {
+    const dates = new Set<string>();
+    filteredData.forEach(p => {
+      if (p.dataVencimento) {
+        dates.add(p.dataVencimento);
+      }
+    });
+    return Array.from(dates).sort();
+  }, [filteredData]);
+
+  const hasMultipleDueDates = uniqueDueDates.length > 1;
+
+  const finalFilteredData = useMemo(() => {
+    if (selectedVctoDia === 'todos' || !hasMultipleDueDates) return filteredData;
+    return filteredData.filter(item => item.dataVencimento === selectedVctoDia);
+  }, [filteredData, selectedVctoDia, hasMultipleDueDates]);
 
   if (loading) {
     return (
@@ -117,6 +140,24 @@ export default function ConsultaADMPage() {
                 ))}
               </select>
             </div>
+
+            {hasMultipleDueDates && (
+              <div className="relative">
+                <CalendarIcon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                <select
+                  value={selectedVctoDia}
+                  onChange={(e) => setSelectedVctoDia(e.target.value)}
+                  className="pl-10 pr-10 py-3 bg-white border border-slate-200 rounded-2xl text-xs font-bold uppercase tracking-widest outline-none appearance-none cursor-pointer focus:ring-2 focus:ring-emerald-500/20 text-slate-700"
+                >
+                  <option value="todos">TODOS OS VCTOS</option>
+                  {uniqueDueDates.map(dateStr => (
+                    <option key={dateStr} value={dateStr}>
+                      {format(parseISO(dateStr), 'dd/MM/yyyy')}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
         </div>
 
@@ -135,7 +176,7 @@ export default function ConsultaADMPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
-                {filteredData.length === 0 ? (
+                {finalFilteredData.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="px-4 py-12 text-center">
                       <div className="flex flex-col items-center gap-2 text-slate-400">
@@ -145,7 +186,7 @@ export default function ConsultaADMPage() {
                     </td>
                   </tr>
                 ) : (
-                  filteredData.map((item) => (
+                  finalFilteredData.map((item) => (
                     <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
                       <td className="px-4 py-0.5 whitespace-nowrap">
                         <span className="text-xs font-black text-slate-700">
@@ -189,7 +230,7 @@ export default function ConsultaADMPage() {
                   ))
                 )}
               </tbody>
-              {filteredData.length > 0 && (
+              {finalFilteredData.length > 0 && (
                 <tfoot className="bg-slate-50/50">
                   <tr>
                     <td colSpan={3} className="px-4 py-1 text-[10px] font-black text-slate-900 uppercase tracking-widest text-right">
@@ -198,7 +239,7 @@ export default function ConsultaADMPage() {
                     <td className="px-4 py-1 text-right">
                       <span className="text-sm font-black text-slate-900">
                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-                          filteredData.reduce((acc, curr) => acc + curr.valorTotal, 0)
+                          finalFilteredData.reduce((acc, curr) => acc + curr.valorTotal, 0)
                         )}
                       </span>
                     </td>
@@ -206,7 +247,7 @@ export default function ConsultaADMPage() {
                     <td className="px-4 py-1 text-right">
                       <span className="text-sm font-black text-rose-500">
                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-                          filteredData.reduce((acc, curr) => acc + curr.valorDevedor, 0)
+                          finalFilteredData.reduce((acc, curr) => acc + curr.valorDevedor, 0)
                         )}
                       </span>
                     </td>
