@@ -15,9 +15,14 @@ export default function ConsultaDevedoresPage() {
   const { allLancamentosCompletos, devedores, loading } = useFinance();
   const [selectedVencimento, setSelectedVencimento] = useState<string>(format(new Date(), 'yyyy-MM'));
   const [selectedDevedor, setSelectedDevedor] = useState<string>('todos');
+  const [selectedVctoDia, setSelectedVctoDia] = useState<string>('todos');
+
+  useEffect(() => {
+    setSelectedVctoDia('todos');
+  }, [selectedVencimento, selectedDevedor]);
 
   const handleWhatsAppShare = () => {
-    if (selectedDevedor === 'todos' || filteredData.length === 0) return;
+    if (selectedDevedor === 'todos' || finalFilteredData.length === 0) return;
 
     const devedor = devedores.find(d => d.id === selectedDevedor);
     if (!devedor || !devedor.telefone) {
@@ -26,20 +31,24 @@ export default function ConsultaDevedoresPage() {
     }
 
     const currencyFormatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
-    const total = filteredData.reduce((acc, curr) => acc + curr.valorDevedor, 0);
+    const total = finalFilteredData.reduce((acc, curr) => acc + curr.valorDevedor, 0);
     
     const [year, month] = (selectedVencimento || '').split('-').map(Number);
     const dateRef = !isNaN(year) && !isNaN(month) ? new Date(year, month - 1) : new Date();
     
     let message = `*EXTRATO DE VALORES A PAGAR*\n`;
     message += `*Devedor:* ${devedor.nome.toUpperCase()}\n`;
-    message += `*Vencimento:* ${format(dateRef, 'MMMM yyyy', { locale: ptBR }).toUpperCase()}\n\n`;
+    message += `*Vencimento:* ${format(dateRef, 'MMMM yyyy', { locale: ptBR }).toUpperCase()}\n`;
+    if (selectedVctoDia !== 'todos') {
+      message += `*Data Específica:* ${format(parseISO(selectedVctoDia), 'dd/MM/yyyy')}\n`;
+    }
+    message += `\n`;
     
     // Header for the table - using a more compact format for mobile
     message += `\`Valor    | Parc. | Ref.\`\n`;
     message += `\`---------|-------|------\`\n`;
     
-    filteredData.forEach(item => {
+    finalFilteredData.forEach(item => {
       // Remove R$ and use a more compact numeric representation
       const valorStr = currencyFormatter.format(item.valorDevedor).replace('R$', '').trim();
       const parc = `${item.numeroParcela}/${item.totalParcelas}`;
@@ -87,6 +96,23 @@ export default function ConsultaDevedoresPage() {
       return matchesVencimento && matchesDevedor;
     }).sort((a, b) => (a.dataVencimento || '').localeCompare(b.dataVencimento || ''));
   }, [allLancamentosCompletos, selectedVencimento, selectedDevedor]);
+
+  const uniqueDueDates = useMemo(() => {
+    const dates = new Set<string>();
+    filteredData.forEach(p => {
+      if (p.dataVencimento) {
+        dates.add(p.dataVencimento);
+      }
+    });
+    return Array.from(dates).sort();
+  }, [filteredData]);
+
+  const hasMultipleDueDates = uniqueDueDates.length > 1;
+
+  const finalFilteredData = useMemo(() => {
+    if (selectedVctoDia === 'todos' || !hasMultipleDueDates) return filteredData;
+    return filteredData.filter(item => item.dataVencimento === selectedVctoDia);
+  }, [filteredData, selectedVctoDia, hasMultipleDueDates]);
 
   if (loading) {
     return (
@@ -145,7 +171,25 @@ export default function ConsultaDevedoresPage() {
               </select>
             </div>
 
-            {selectedDevedor !== 'todos' && filteredData.length > 0 && (
+            {hasMultipleDueDates && (
+              <div className="relative">
+                <CalendarIcon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                <select
+                  value={selectedVctoDia}
+                  onChange={(e) => setSelectedVctoDia(e.target.value)}
+                  className="pl-10 pr-10 py-3 bg-white border border-slate-200 rounded-2xl text-xs font-bold uppercase tracking-widest outline-none appearance-none cursor-pointer focus:ring-2 focus:ring-emerald-500/20 text-slate-700"
+                >
+                  <option value="todos">TODOS OS VCTOS</option>
+                  {uniqueDueDates.map(dateStr => (
+                    <option key={dateStr} value={dateStr}>
+                      {format(parseISO(dateStr), 'dd/MM/yyyy')}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {selectedDevedor !== 'todos' && finalFilteredData.length > 0 && (
               <button
                 onClick={handleWhatsAppShare}
                 className="flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-emerald-200 active:scale-95"
@@ -171,7 +215,7 @@ export default function ConsultaDevedoresPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
-                {filteredData.length === 0 ? (
+                {finalFilteredData.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-4 py-12 text-center">
                       <div className="flex flex-col items-center gap-2 text-slate-400">
@@ -181,7 +225,7 @@ export default function ConsultaDevedoresPage() {
                     </td>
                   </tr>
                 ) : (
-                  filteredData.map((item) => (
+                  finalFilteredData.map((item) => (
                     <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
                       <td className="px-4 py-0.5 whitespace-nowrap">
                         <span className="text-xs font-black text-slate-700">
@@ -216,16 +260,16 @@ export default function ConsultaDevedoresPage() {
                   ))
                 )}
               </tbody>
-              {filteredData.length > 0 && (
+              {finalFilteredData.length > 0 && (
                 <tfoot className="bg-slate-50/50">
                   <tr>
                     <td colSpan={4} className="px-4 py-2 text-[10px] font-black text-slate-900 uppercase tracking-widest text-right">
                       Total no Período:
                     </td>
                     <td className="px-4 py-2 text-right">
-                      <span className={`text-sm font-black ${filteredData.reduce((acc, curr) => acc + curr.valorDevedor, 0) >= 0 ? 'text-rose-500' : 'text-emerald-500'}`}>
+                      <span className={`text-sm font-black ${finalFilteredData.reduce((acc, curr) => acc + curr.valorDevedor, 0) >= 0 ? 'text-rose-500' : 'text-emerald-500'}`}>
                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-                          filteredData.reduce((acc, curr) => acc + curr.valorDevedor, 0)
+                          finalFilteredData.reduce((acc, curr) => acc + curr.valorDevedor, 0)
                         )}
                       </span>
                     </td>
