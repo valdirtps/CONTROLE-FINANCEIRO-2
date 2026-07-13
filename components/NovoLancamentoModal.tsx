@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { 
@@ -55,6 +55,7 @@ export function NovoLancamentoModal({ isOpen, onClose, editingId }: NovoLancamen
     watch,
     reset,
     setValue,
+    control,
     formState: { errors, isSubmitting }
   } = useForm<LancamentoFormValues>({
     resolver: zodResolver(lancamentoSchema),
@@ -76,6 +77,21 @@ export function NovoLancamentoModal({ isOpen, onClose, editingId }: NovoLancamen
       setValue('dividirConta', true);
     }
   }, [isDV, setValue]);
+
+  const devedorId = watch('devedorId');
+  const valorTotal = watch('valorTotal') || 0;
+  const numParcelas = watch('numParcelas') || 1;
+  const dividirConta = watch('dividirConta');
+  const valorDebitoDevedorInput = watch('valorDebitoDevedor') || 0;
+
+  React.useEffect(() => {
+    if (devedorId && devedorId !== 'none' && valorTotal > 0) {
+      const currentVal = watch('valorDebitoDevedor');
+      if (!currentVal || currentVal === 0) {
+        setValue('valorDebitoDevedor', valorTotal);
+      }
+    }
+  }, [devedorId, valorTotal, setValue, watch]);
 
   React.useEffect(() => {
     if (editingId && isOpen) {
@@ -118,11 +134,6 @@ export function NovoLancamentoModal({ isOpen, onClose, editingId }: NovoLancamen
       });
     }
   }, [editingId, isOpen, reset, lancamentos, parcelas]);
-
-  const valorTotal = watch('valorTotal') || 0;
-  const numParcelas = watch('numParcelas') || 1;
-  const dividirConta = watch('dividirConta');
-  const valorDebitoDevedorInput = watch('valorDebitoDevedor') || 0;
 
   const valorParcela = valorTotal / numParcelas;
   let valorDevedor = 0;
@@ -228,12 +239,23 @@ export function NovoLancamentoModal({ isOpen, onClose, editingId }: NovoLancamen
                       </label>
                       <div className="relative">
                         <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-400">R$</span>
-                        <input
-                          {...register('valorTotal')}
-                          type="number"
-                          step="0.01"
-                          placeholder="0,00"
-                          className="w-full bg-white border-2 border-transparent focus:border-emerald-500 rounded-xl pl-7 pr-2.5 py-1 transition-all outline-none font-bold text-xs shadow-sm"
+                        <Controller
+                          name="valorTotal"
+                          control={control}
+                          render={({ field }) => (
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              value={new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(field.value || 0)}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, '');
+                                const newValue = value ? parseInt(value, 10) / 100 : 0;
+                                field.onChange(newValue);
+                              }}
+                              placeholder="0,00"
+                              className="w-full bg-white border-2 border-transparent focus:border-emerald-500 rounded-xl pl-7 pr-2.5 py-1 transition-all outline-none font-bold text-xs shadow-sm"
+                            />
+                          )}
                         />
                       </div>
                     </div>
@@ -350,13 +372,24 @@ export function NovoLancamentoModal({ isOpen, onClose, editingId }: NovoLancamen
                         </label>
                         <div className="relative">
                           <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-400">R$</span>
-                          <input
-                            {...register('valorDebitoDevedor')}
-                            type="number"
-                            step="0.01"
-                            disabled={isDV}
-                            placeholder={isDV ? "Automático" : "0 para 50/50"}
-                            className="w-full bg-white border-2 border-transparent focus:border-emerald-500 rounded-xl pl-7 pr-2.5 py-1 transition-all outline-none font-bold text-xs shadow-sm disabled:opacity-50"
+                          <Controller
+                            name="valorDebitoDevedor"
+                            control={control}
+                            render={({ field }) => (
+                              <input
+                                type="text"
+                                inputMode="numeric"
+                                value={new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(field.value || 0)}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/\D/g, '');
+                                  const newValue = value ? parseInt(value, 10) / 100 : 0;
+                                  field.onChange(newValue);
+                                }}
+                                disabled={isDV}
+                                placeholder={isDV ? "Automático" : "0,00"}
+                                className="w-full bg-white border-2 border-transparent focus:border-emerald-500 rounded-xl pl-7 pr-2.5 py-1 transition-all outline-none font-bold text-xs shadow-sm disabled:opacity-50"
+                              />
+                            )}
                           />
                         </div>
                       </div>
