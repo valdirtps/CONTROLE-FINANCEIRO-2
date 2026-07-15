@@ -201,11 +201,11 @@ export default function ConsultaDevedoresPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
+        <div className="bg-white rounded-[2rem] border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50/50 border-b border-slate-100">
+                <tr className="bg-[#ebf0f5]/50 border-b border-slate-200">
                   <th className="px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">Vcto</th>
                   <th className="px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">Devedor</th>
                   <th className="px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">Conta</th>
@@ -226,7 +226,7 @@ export default function ConsultaDevedoresPage() {
                   </tr>
                 ) : (
                   finalFilteredData.map((item) => (
-                    <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
+                    <tr key={item.id} className="hover:bg-[#ebf0f5]/50 transition-colors group">
                       <td className="px-4 py-0.5 whitespace-nowrap">
                         <span className="text-xs font-black text-slate-700">
                           {format(parseISO(item.dataVencimento), 'dd/MM/yyyy')}
@@ -244,7 +244,7 @@ export default function ConsultaDevedoresPage() {
                         <span className="text-xs font-medium text-slate-600">{item.contaNome}</span>
                       </td>
                       <td className="px-4 py-0.5">
-                        <span className="px-2 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black tracking-widest">
+                        <span className="px-2 py-1 bg-[#ebf0f5] text-slate-600 rounded-lg text-[10px] font-black tracking-widest">
                           {item.numeroParcela}/{item.totalParcelas}
                         </span>
                       </td>
@@ -261,7 +261,7 @@ export default function ConsultaDevedoresPage() {
                 )}
               </tbody>
               {finalFilteredData.length > 0 && (
-                <tfoot className="bg-slate-50/50">
+                <tfoot className="bg-[#ebf0f5]/50">
                   <tr>
                     <td colSpan={4} className="px-4 py-2 text-[10px] font-black text-slate-900 uppercase tracking-widest text-right">
                       Total no Período:

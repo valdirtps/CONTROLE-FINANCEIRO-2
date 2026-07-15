@@ -145,13 +145,13 @@ export default function RelatoriosPage() {
 
         {/* Tabela de Resumo Anual */}
         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-slate-100">
+          <div className="p-6 border-b border-slate-200">
             <h3 className="text-lg font-semibold text-slate-900">Resumo Detalhado</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50">
+                <tr className="bg-[#ebf0f5]">
                   <th className="px-6 py-4 text-sm font-semibold text-slate-600">Mês</th>
                   <th className="px-6 py-4 text-sm font-semibold text-slate-600 text-right">Receitas</th>
                   <th className="px-6 py-4 text-sm font-semibold text-slate-600 text-right">Despesas</th>
@@ -160,7 +160,7 @@ export default function RelatoriosPage() {
               </thead>
               <tbody className="divide-y divide-slate-50">
                 {barData.reverse().map((data) => (
-                  <tr key={data.name} className="hover:bg-slate-50 transition-colors">
+                  <tr key={data.name} className="hover:bg-[#ebf0f5] transition-colors">
                     <td className="px-6 py-4 text-sm font-medium text-slate-900">{data.name}</td>
                     <td className="px-6 py-4 text-right text-emerald-600 font-medium">
                       {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(data.receitas)}

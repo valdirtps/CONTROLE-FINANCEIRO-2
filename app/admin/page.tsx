@@ -71,7 +71,7 @@ export default function AdminPage() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-          <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50">
+          <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-xl shadow-slate-200/50">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Nome */}
               <div className="md:col-span-2">
@@ -82,7 +82,7 @@ export default function AdminPage() {
                 <input
                   {...register('nome')}
                   type="text"
-                  className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 transition-all outline-none font-medium"
+                  className="w-full bg-[#ebf0f5] border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 transition-all outline-none font-medium"
                 />
                 {errors.nome && <p className="mt-1 text-rose-500 text-xs font-bold">{errors.nome.message}</p>}
               </div>
@@ -96,7 +96,7 @@ export default function AdminPage() {
                 <input
                   {...register('email')}
                   type="email"
-                  className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 transition-all outline-none font-medium"
+                  className="w-full bg-[#ebf0f5] border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 transition-all outline-none font-medium"
                 />
                 {errors.email && <p className="mt-1 text-rose-500 text-xs font-bold">{errors.email.message}</p>}
               </div>
@@ -110,7 +110,7 @@ export default function AdminPage() {
                 <input
                   {...register('telefone')}
                   type="text"
-                  className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 transition-all outline-none font-medium"
+                  className="w-full bg-[#ebf0f5] border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 transition-all outline-none font-medium"
                 />
               </div>
 
@@ -123,7 +123,7 @@ export default function AdminPage() {
                 <input
                   {...register('endereco')}
                   type="text"
-                  className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 transition-all outline-none font-medium"
+                  className="w-full bg-[#ebf0f5] border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 transition-all outline-none font-medium"
                 />
               </div>
 
@@ -133,7 +133,7 @@ export default function AdminPage() {
                 <input
                   {...register('cidade')}
                   type="text"
-                  className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 transition-all outline-none font-medium"
+                  className="w-full bg-[#ebf0f5] border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 transition-all outline-none font-medium"
                 />
               </div>
 
@@ -144,7 +144,7 @@ export default function AdminPage() {
                   {...register('estado')}
                   type="text"
                   maxLength={2}
-                  className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 transition-all outline-none font-medium"
+                  className="w-full bg-[#ebf0f5] border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 transition-all outline-none font-medium"
                 />
               </div>
             </div>

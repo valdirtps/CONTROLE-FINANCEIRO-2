@@ -256,7 +256,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#ebf0f5] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
           <p className="text-slate-500 font-medium">Carregando FinancePro...</p>
@@ -267,15 +267,15 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl shadow-slate-200 p-8 md:p-12 text-center border border-slate-100">
+      <div className="min-h-screen bg-[#ebf0f5] flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl shadow-slate-200 p-8 md:p-12 text-center border border-slate-200">
           <div className="w-20 h-20 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-8">
             <Lock className="text-emerald-500" size={40} />
           </div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tighter mb-1">
             FINANCE<span className="text-emerald-500">PRO</span>
           </h1>
-          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-slate-100 rounded-full text-[10px] font-black text-slate-500 mb-6 uppercase tracking-wider">
+          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-[#ebf0f5] rounded-full text-[10px] font-black text-slate-500 mb-6 uppercase tracking-wider">
             SISTEMA ATUALIZADO <span className="text-emerald-500">•</span> v1.2.2
           </div>
           <p className="text-slate-600 mb-8 font-medium">
@@ -298,7 +298,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                     value={nome}
                     onChange={(e) => setNome(e.target.value)}
                     required
-                    className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium"
+                    className="w-full px-5 py-4 bg-[#ebf0f5] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium"
                     placeholder="Seu nome"
                   />
                 </div>
@@ -310,7 +310,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                       value={pix}
                       onChange={(e) => setPix(e.target.value)}
                       required
-                      className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium"
+                      className="w-full px-5 py-4 bg-[#ebf0f5] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium"
                       placeholder="Email, CPF ou Celular"
                     />
                   </div>
@@ -321,7 +321,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                       value={contato}
                       onChange={(e) => setContato(e.target.value)}
                       required
-                      className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium"
+                      className="w-full px-5 py-4 bg-[#ebf0f5] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium"
                       placeholder="(00) 00000-0000"
                     />
                   </div>
@@ -335,7 +335,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium"
+                className="w-full px-5 py-4 bg-[#ebf0f5] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium"
                 placeholder="seu@email.com"
               />
             </div>
@@ -347,7 +347,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium pr-14"
+                  className="w-full px-5 py-4 bg-[#ebf0f5] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium pr-14"
                   placeholder="••••••••"
                 />
                 <button
@@ -368,7 +368,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium"
+                  className="w-full px-5 py-4 bg-[#ebf0f5] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 font-medium"
                   placeholder="••••••••"
                 />
               </div>
@@ -407,7 +407,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-100"></div>
+              <div className="w-full border-t border-slate-200"></div>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-white px-4 text-slate-400 font-black tracking-widest">ou</span>
@@ -417,7 +417,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           <button 
             onClick={handleGoogleLogin}
             disabled={isAuthLoading}
-            className="w-full bg-white border-2 border-slate-100 hover:border-emerald-500/30 hover:bg-slate-50 disabled:opacity-50 text-slate-600 font-bold py-4 px-6 rounded-2xl transition-all flex items-center justify-center gap-3 active:scale-[0.98]"
+            className="w-full bg-white border-2 border-slate-200 hover:border-emerald-500/30 hover:bg-[#ebf0f5] disabled:opacity-50 text-slate-600 font-bold py-4 px-6 rounded-2xl transition-all flex items-center justify-center gap-3 active:scale-[0.98]"
           >
             <LogIn size={20} className="text-emerald-500" />
             {isAuthLoading ? 'Entrando...' : 'Entrar com Google'}
@@ -444,7 +444,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   }
 
   return (
-    <div className="h-screen bg-slate-50 flex overflow-hidden">
+    <div className="h-screen bg-[#ebf0f5] flex overflow-hidden">
       {/* Mobile Backdrop */}
       {isMobileOpen && (
         <div 
@@ -537,7 +537,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         </header>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto bg-slate-50 relative">
+        <div className="flex-1 overflow-y-auto bg-[#ebf0f5] relative">
           {children}
         </div>
       </main>

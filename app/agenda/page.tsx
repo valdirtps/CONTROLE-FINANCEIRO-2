@@ -185,9 +185,9 @@ export default function AgendaPage() {
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="col-span-full py-20 flex flex-col items-center justify-center text-slate-400 bg-white border border-slate-100 rounded-3xl"
+                className="col-span-full py-20 flex flex-col items-center justify-center text-slate-400 bg-white border border-slate-200 rounded-3xl"
               >
-                <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-[#ebf0f5] rounded-full flex items-center justify-center mb-4">
                   <CalendarIcon size={32} />
                 </div>
                 <p className="font-bold">Nenhum evento encontrado</p>
@@ -206,13 +206,13 @@ export default function AgendaPage() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     className={`group relative bg-white border-2 rounded-3xl p-6 transition-all hover:shadow-2xl hover:shadow-slate-200/50 ${
-                      near ? 'border-emerald-500/30' : expired ? 'border-rose-500/30' : 'border-slate-100'
+                      near ? 'border-emerald-500/30' : expired ? 'border-rose-500/30' : 'border-slate-200'
                     } ${evento.finalizado ? 'opacity-70 grayscale-[0.5]' : ''}`}
                   >
                     {/* Status Badge */}
                     <div className="flex items-start justify-between mb-6">
                       <div className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${
-                        evento.finalizado ? 'bg-slate-100 text-slate-400' : 
+                        evento.finalizado ? 'bg-[#ebf0f5] text-slate-400' : 
                         near ? 'bg-emerald-100 text-emerald-600 animate-pulse' : 
                         expired ? 'bg-rose-100 text-rose-600' :
                         'bg-blue-100 text-blue-600'
@@ -244,9 +244,9 @@ export default function AgendaPage() {
                       {evento.descricao || 'Sem descrição definida'}
                     </p>
 
-                    <div className="space-y-3 pt-6 border-t border-slate-100">
+                    <div className="space-y-3 pt-6 border-t border-slate-200">
                       <div className="flex items-center gap-3 text-slate-500">
-                        <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400">
+                        <div className="w-8 h-8 rounded-lg bg-[#ebf0f5] flex items-center justify-center text-slate-400">
                           <CalendarIcon size={14} />
                         </div>
                         <span className="text-xs font-bold uppercase tracking-widest">
@@ -261,7 +261,7 @@ export default function AgendaPage() {
                         onClick={() => toggleFinalizado(evento)}
                         className={`w-full py-4 rounded-2xl flex items-center justify-center gap-3 text-xs font-black uppercase tracking-widest transition-all ${
                           evento.finalizado 
-                            ? 'bg-slate-50 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600' 
+                            ? 'bg-[#ebf0f5] text-slate-400 hover:bg-emerald-50 hover:text-emerald-600' 
                             : 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 active:scale-95'
                         }`}
                       >
@@ -314,7 +314,7 @@ export default function AgendaPage() {
                   </div>
                   <button 
                     onClick={() => setIsModalOpen(false)}
-                    className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors"
+                    className="w-10 h-10 rounded-full bg-[#ebf0f5] flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors"
                   >
                     <X size={20} />
                   </button>
@@ -326,7 +326,7 @@ export default function AgendaPage() {
                     <input 
                       {...register('titulo')}
                       placeholder="Ex: Pagamento Fornecedor"
-                      className={`w-full bg-slate-50 border-2 rounded-2xl px-6 py-4 text-sm font-bold outline-none transition-all ${
+                      className={`w-full bg-[#ebf0f5] border-2 rounded-2xl px-6 py-4 text-sm font-bold outline-none transition-all ${
                         errors.titulo ? 'border-rose-500' : 'border-transparent focus:border-emerald-500 focus:bg-white'
                       }`}
                     />
@@ -340,7 +340,7 @@ export default function AgendaPage() {
                       <input 
                         {...register('data')}
                         type="date"
-                        className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl pl-16 pr-6 py-4 text-sm font-bold outline-none transition-all"
+                        className="w-full bg-[#ebf0f5] border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl pl-16 pr-6 py-4 text-sm font-bold outline-none transition-all"
                       />
                     </div>
                   </div>
@@ -351,7 +351,7 @@ export default function AgendaPage() {
                       {...register('descricao')}
                       placeholder="Detalhes adicionais sobre o evento..."
                       rows={3}
-                      className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-6 py-4 text-sm font-bold outline-none transition-all resize-none"
+                      className="w-full bg-[#ebf0f5] border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-6 py-4 text-sm font-bold outline-none transition-all resize-none"
                     />
                   </div>
 

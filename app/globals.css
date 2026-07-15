@@ -48,7 +48,7 @@
     @apply h-full;
   }
   body {
-    @apply bg-slate-50 text-slate-900 h-full;
+    @apply bg-[#ebf0f5] text-slate-900 h-full;
   }
 }
 
@@ -58,14 +58,14 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f8fafc; /* slate-50 */
+  background: #ebf0f5; 
   border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #cbd5e1; /* slate-300 */
   border-radius: 10px;
-  border: 2px solid #f8fafc;
+  border: 2px solid #ebf0f5;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {

@@ -193,7 +193,7 @@ export default function Dashboard() {
                         </div>
                         <button 
                           onClick={() => updateEvento(evento.id, { finalizado: true })}
-                          className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-emerald-500 hover:text-white transition-all shadow-sm"
+                          className="w-8 h-8 rounded-full bg-[#ebf0f5] flex items-center justify-center text-slate-400 hover:bg-emerald-500 hover:text-white transition-all shadow-sm"
                           title="Marcar como Finalizado"
                         >
                           <CheckCircle2 size={16} />
@@ -218,8 +218,8 @@ export default function Dashboard() {
         )}
 
         {/* Main Summary Table - RESTORED AND COMPACTED */}
-        <div className="bg-white rounded-[2rem] border border-slate-100 shadow-lg shadow-slate-200/40 overflow-hidden">
-          <div className="px-6 py-3 border-b border-slate-50 flex items-center justify-between bg-slate-50/30">
+        <div className="bg-white rounded-[2rem] border border-slate-200 shadow-lg shadow-slate-200/40 overflow-hidden">
+          <div className="px-6 py-3 border-b border-slate-100 flex items-center justify-between bg-[#ebf0f5]/30">
             <h3 className="text-sm font-black text-slate-900 flex items-center gap-2">
               <Calendar className="text-emerald-500" size={18} />
               Resumo por Vencimento
@@ -229,7 +229,7 @@ export default function Dashboard() {
           <div className="overflow-x-auto max-h-[240px] overflow-y-auto custom-scrollbar relative bg-white">
             <table className="w-full text-left border-collapse">
               <thead className="sticky top-0 z-10 bg-white shadow-[0_1px_0_0_rgba(0,0,0,0.05)]">
-                <tr className="bg-slate-50/80 backdrop-blur-sm">
+                <tr className="bg-[#ebf0f5]/80 backdrop-blur-sm">
                   <th className="px-6 py-2 text-[11px] font-black text-slate-400 uppercase tracking-widest">Data do Vcto</th>
                   <th className="px-6 py-2 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">Receita</th>
                   <th className="px-6 py-2 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">Valores a Pagar</th>
@@ -241,7 +241,7 @@ export default function Dashboard() {
                 {monthlySummaries.map((summary, index) => (
                   <tr 
                     key={index} 
-                    className="hover:bg-slate-50/50 transition-colors group"
+                    className="hover:bg-[#ebf0f5]/50 transition-colors group"
                   >
                     <td className="px-6 py-1.5">
                       <span className="text-sm font-black text-slate-900 capitalize group-hover:text-emerald-600 transition-colors">

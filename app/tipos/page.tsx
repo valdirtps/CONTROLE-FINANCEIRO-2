@@ -134,11 +134,11 @@ export default function TiposPage() {
           </button>
         </div>
 
-        <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
+        <div className="bg-white rounded-[2rem] border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50/50 border-b border-slate-100">
+                <tr className="bg-[#ebf0f5]/50 border-b border-slate-200">
                   <th className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider">Tipo</th>
                   <th className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider">Nome da Categoria</th>
                   <th className="w-20 px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider text-center">Ações</th>
@@ -156,7 +156,7 @@ export default function TiposPage() {
                   </tr>
                 ) : (
                   tipos.map((tipo) => (
-                    <tr key={tipo.id} className="hover:bg-slate-50/50 transition-colors group">
+                    <tr key={tipo.id} className="hover:bg-[#ebf0f5]/50 transition-colors group">
                       <td className="px-4 py-1">
                         {tipo.flagMatematica === '+' ? (
                           <div className="flex items-center gap-1.5 text-emerald-500 font-black text-[10px] uppercase tracking-tighter">
@@ -229,7 +229,7 @@ export default function TiposPage() {
                   </h2>
                   <button
                     onClick={handleCloseModal}
-                    className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+                    className="p-2 hover:bg-[#ebf0f5] rounded-xl transition-colors"
                   >
                     <X size={20} />
                   </button>
@@ -242,7 +242,7 @@ export default function TiposPage() {
                       {...register('nome')}
                       type="text"
                       placeholder="Ex: Alimentação, Lazer..."
-                      className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 transition-all outline-none font-medium"
+                      className="w-full bg-[#ebf0f5] border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 transition-all outline-none font-medium"
                     />
                     {errors.nome && <p className="mt-2 text-rose-500 text-xs font-bold">{errors.nome.message}</p>}
                   </div>
@@ -252,7 +252,7 @@ export default function TiposPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <label className={`
                         flex items-center justify-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all
-                        ${selectedFlag === '-' ? 'border-rose-500 bg-rose-50 text-rose-600' : 'border-transparent bg-slate-50 text-slate-500'}
+                        ${selectedFlag === '-' ? 'border-rose-500 bg-rose-50 text-rose-600' : 'border-transparent bg-[#ebf0f5] text-slate-500'}
                       `}>
                         <input {...register('flagMatematica')} type="radio" value="-" className="hidden" />
                         <ArrowDownCircle size={20} />
@@ -260,7 +260,7 @@ export default function TiposPage() {
                       </label>
                       <label className={`
                         flex items-center justify-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all
-                        ${selectedFlag === '+' ? 'border-emerald-500 bg-emerald-50 text-emerald-600' : 'border-transparent bg-slate-50 text-slate-500'}
+                        ${selectedFlag === '+' ? 'border-emerald-500 bg-emerald-50 text-emerald-600' : 'border-transparent bg-[#ebf0f5] text-slate-500'}
                       `}>
                         <input {...register('flagMatematica')} type="radio" value="+" className="hidden" />
                         <ArrowUpCircle size={20} />
@@ -269,7 +269,7 @@ export default function TiposPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border-2 border-transparent hover:border-slate-100 transition-all">
+                  <div className="flex items-center justify-between p-4 bg-[#ebf0f5] rounded-2xl border-2 border-transparent hover:border-slate-200 transition-all">
                     <div className="pr-4">
                       <label className="block text-sm font-black text-slate-800 uppercase tracking-tight">Vincular ao Devedor (DV)</label>
                       <span className="text-[10px] text-slate-500 font-medium block leading-tight mt-0.5">O crédito/débito ficará para o devedor conforme o parcelamento</span>
@@ -331,7 +331,7 @@ export default function TiposPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => setDeleteConfirmId(null)}
-                    className="py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-500 hover:bg-slate-100 transition-colors"
+                    className="py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-500 hover:bg-[#ebf0f5] transition-colors"
                   >
                     Cancelar
                   </button>

@@ -173,7 +173,7 @@ export default function LancamentosPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => setDeleteConfirmId(null)}
-                    className="py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-500 hover:bg-slate-100 transition-colors"
+                    className="py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-500 hover:bg-[#ebf0f5] transition-colors"
                   >
                     Cancelar
                   </button>
@@ -190,7 +190,7 @@ export default function LancamentosPage() {
         </AnimatePresence>
 
         {/* Filtros e Busca */}
-        <div className="bg-white p-4 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col md:flex-row gap-4 items-center">
+        <div className="bg-white p-4 rounded-[2rem] border border-slate-200 shadow-xl shadow-slate-200/50 flex flex-col md:flex-row gap-4 items-center">
           <div className="relative w-full md:w-64 group">
             <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors">
               <Calendar size={20} />
@@ -198,7 +198,7 @@ export default function LancamentosPage() {
             <select
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="w-full pl-14 pr-12 py-3 bg-slate-50 border-none rounded-2xl text-sm font-black text-slate-600 focus:ring-2 focus:ring-emerald-500/20 transition-all appearance-none cursor-pointer"
+              className="w-full pl-14 pr-12 py-3 bg-[#ebf0f5] border-none rounded-2xl text-sm font-black text-slate-600 focus:ring-2 focus:ring-emerald-500/20 transition-all appearance-none cursor-pointer"
             >
               <option value="todos">TODOS OS VENCIMENTOS</option>
               {uniqueDates.map(date => (
@@ -221,23 +221,23 @@ export default function LancamentosPage() {
               placeholder="FILTRAR POR REFERENTE..."
               value={referenteTerm}
               onChange={(e) => setReferenteTerm(e.target.value)}
-              className="w-full pl-14 pr-6 py-3 bg-slate-50 border-none rounded-2xl text-sm font-black text-slate-600 placeholder:text-slate-300 focus:ring-2 focus:ring-emerald-500/20 transition-all"
+              className="w-full pl-14 pr-6 py-3 bg-[#ebf0f5] border-none rounded-2xl text-sm font-black text-slate-600 placeholder:text-slate-300 focus:ring-2 focus:ring-emerald-500/20 transition-all"
             />
           </div>
 
           <div className="flex gap-2 shrink-0">
-            <button className="flex items-center justify-center p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-emerald-50 hover:text-emerald-500 transition-all">
+            <button className="flex items-center justify-center p-3 bg-[#ebf0f5] text-slate-400 rounded-xl hover:bg-emerald-50 hover:text-emerald-500 transition-all">
               <Download size={18} />
             </button>
           </div>
         </div>
 
         {/* Tabela de Lançamentos */}
-        <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
+        <div className="bg-white rounded-[2rem] border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[1200px] table-fixed">
               <thead>
-                <tr className="bg-slate-50/50 border-b border-slate-100">
+                <tr className="bg-[#ebf0f5]/50 border-b border-slate-200">
                   <th className="w-24 px-4 py-2 text-[12px] font-black text-slate-400 uppercase tracking-wider">Vencimento</th>
                   <th className="w-24 px-4 py-2 text-[12px] font-black text-slate-400 uppercase tracking-wider">Categoria</th>
                   <th className="w-32 px-4 py-2 text-[12px] font-black text-slate-400 uppercase tracking-wider">Conta</th>
@@ -263,7 +263,7 @@ export default function LancamentosPage() {
                   </tr>
                 ) : (
                   filteredData.map((item) => (
-                    <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
+                    <tr key={item.id} className="hover:bg-[#ebf0f5]/50 transition-colors group">
                       <td className="px-4 py-2">
                         <span className="text-sm font-black text-slate-900 whitespace-nowrap">
                           {item.dataVencimento ? format(new Date(item.dataVencimento + 'T12:00:00'), 'dd/MM/yyyy') : '-'}
@@ -289,7 +289,7 @@ export default function LancamentosPage() {
                         </span>
                       </td>
                       <td className="px-4 py-2 text-center">
-                        <span className="text-xs font-black text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">
+                        <span className="text-xs font-black text-slate-500 bg-[#ebf0f5] px-2.5 py-1 rounded-lg">
                           {item.numParcelas}
                         </span>
                       </td>

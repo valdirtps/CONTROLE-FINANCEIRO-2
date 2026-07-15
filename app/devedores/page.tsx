@@ -145,11 +145,11 @@ export default function DevedoresPage() {
           </button>
         </div>
 
-        <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
+        <div className="bg-white rounded-[2rem] border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50/50 border-b border-slate-100">
+                <tr className="bg-[#ebf0f5]/50 border-b border-slate-200">
                   <th className="px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">Devedor</th>
                   <th className="px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">WhatsApp</th>
                   <th className="w-20 px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider text-center">Ações</th>
@@ -167,7 +167,7 @@ export default function DevedoresPage() {
                   </tr>
                 ) : (
                   devedores.map((devedor) => (
-                    <tr key={devedor.id} className="hover:bg-slate-50/50 transition-colors group">
+                    <tr key={devedor.id} className="hover:bg-[#ebf0f5]/50 transition-colors group">
                       <td className="px-4 py-0.5">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center font-black text-[10px]">
@@ -231,7 +231,7 @@ export default function DevedoresPage() {
                   </h2>
                   <button
                     onClick={handleCloseModal}
-                    className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+                    className="p-2 hover:bg-[#ebf0f5] rounded-xl transition-colors"
                   >
                     <X size={20} />
                   </button>
@@ -245,7 +245,7 @@ export default function DevedoresPage() {
                         {...register('nome')}
                         type="text"
                         placeholder="Ex: João Silva"
-                        className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-3.5 transition-all outline-none font-medium"
+                        className="w-full bg-[#ebf0f5] border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-3.5 transition-all outline-none font-medium"
                       />
                       {errors.nome && <p className="mt-1 text-rose-500 text-xs font-bold">{errors.nome.message}</p>}
                     </div>
@@ -256,7 +256,7 @@ export default function DevedoresPage() {
                         {...register('telefone', { onChange: onTelefoneChange })}
                         type="text"
                         placeholder="(00) 00000-0000"
-                        className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-3.5 transition-all outline-none font-medium"
+                        className="w-full bg-[#ebf0f5] border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-3.5 transition-all outline-none font-medium"
                       />
                       {errors.telefone && <p className="mt-1 text-rose-500 text-xs font-bold">{errors.telefone.message}</p>}
                     </div>
@@ -309,7 +309,7 @@ export default function DevedoresPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => setDeleteConfirmId(null)}
-                    className="py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-500 hover:bg-slate-100 transition-colors"
+                    className="py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-500 hover:bg-[#ebf0f5] transition-colors"
                   >
                     Cancelar
                   </button>

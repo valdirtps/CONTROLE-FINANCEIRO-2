@@ -132,11 +132,11 @@ export default function ContasPage() {
           </button>
         </div>
 
-        <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
+        <div className="bg-white rounded-[2rem] border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50/50 border-b border-slate-100">
+                <tr className="bg-[#ebf0f5]/50 border-b border-slate-200">
                   <th className="px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">Conta</th>
                   <th className="px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">Descrição</th>
                   <th className="px-4 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider text-center">Receita?</th>
@@ -155,7 +155,7 @@ export default function ContasPage() {
                   </tr>
                 ) : (
                   contas.map((conta) => (
-                    <tr key={conta.id} className="hover:bg-slate-50/50 transition-colors group">
+                    <tr key={conta.id} className="hover:bg-[#ebf0f5]/50 transition-colors group">
                       <td className="px-4 py-0.5">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center">
@@ -172,7 +172,7 @@ export default function ContasPage() {
                           {conta.isReceita ? (
                             <div className="bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest">Sim</div>
                           ) : (
-                            <div className="bg-slate-100 text-slate-400 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest">Não</div>
+                            <div className="bg-[#ebf0f5] text-slate-400 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest">Não</div>
                           )}
                         </div>
                       </td>
@@ -225,7 +225,7 @@ export default function ContasPage() {
                   </h2>
                   <button
                     onClick={handleCloseModal}
-                    className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+                    className="p-2 hover:bg-[#ebf0f5] rounded-xl transition-colors"
                   >
                     <X size={20} />
                   </button>
@@ -240,7 +240,7 @@ export default function ContasPage() {
                       {...register('nome')}
                       type="text"
                       placeholder="Ex: Nubank, Itaú, Carteira"
-                      className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 transition-all outline-none font-medium"
+                      className="w-full bg-[#ebf0f5] border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 transition-all outline-none font-medium"
                     />
                     {errors.nome && (
                       <p className="mt-2 text-rose-500 text-xs font-bold flex items-center gap-1">
@@ -258,7 +258,7 @@ export default function ContasPage() {
                       {...register('descricao')}
                       rows={3}
                       placeholder="Breve descrição da conta..."
-                      className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 transition-all outline-none font-medium resize-none"
+                      className="w-full bg-[#ebf0f5] border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 transition-all outline-none font-medium resize-none"
                     />
                     {errors.descricao && (
                       <p className="mt-2 text-rose-500 text-xs font-bold flex items-center gap-1">
@@ -268,7 +268,7 @@ export default function ContasPage() {
                     )}
                   </div>
 
-                  <div className="flex items-center gap-3 bg-slate-50 p-4 rounded-2xl cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => setValue('isReceita', !watch('isReceita'))}>
+                  <div className="flex items-center gap-3 bg-[#ebf0f5] p-4 rounded-2xl cursor-pointer hover:bg-[#ebf0f5] transition-colors" onClick={() => setValue('isReceita', !watch('isReceita'))}>
                     <div className={`w-12 h-6 rounded-full transition-all relative ${watch('isReceita') ? 'bg-emerald-500' : 'bg-slate-300'}`}>
                       <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${watch('isReceita') ? 'left-7' : 'left-1'}`} />
                     </div>
@@ -326,7 +326,7 @@ export default function ContasPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => setDeleteConfirmId(null)}
-                    className="py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-500 hover:bg-slate-100 transition-colors"
+                    className="py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-500 hover:bg-[#ebf0f5] transition-colors"
                   >
                     Cancelar
                   </button>

@@ -195,7 +195,7 @@ export function NovoLancamentoModal({ isOpen, onClose, editingId }: NovoLancamen
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white rounded-[2.5rem] shadow-2xl z-[101] overflow-hidden max-h-[95vh] flex flex-col"
           >
-            <div className="p-3 flex-shrink-0 border-b border-slate-50">
+            <div className="p-3 flex-shrink-0 border-b border-slate-100">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-base font-black text-slate-900 tracking-tighter flex items-center gap-2">
@@ -205,7 +205,7 @@ export function NovoLancamentoModal({ isOpen, onClose, editingId }: NovoLancamen
                 </div>
                 <button 
                   onClick={onClose}
-                  className="p-1.5 hover:bg-slate-100 rounded-full transition-colors text-slate-400"
+                  className="p-1.5 hover:bg-[#ebf0f5] rounded-full transition-colors text-slate-400"
                 >
                   <X size={16} />
                 </button>
@@ -214,7 +214,7 @@ export function NovoLancamentoModal({ isOpen, onClose, editingId }: NovoLancamen
 
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-grow overflow-hidden">
               <div className="p-3 overflow-y-auto space-y-2 flex-grow scrollbar-hide">
-                <div className="bg-slate-50/50 p-3 rounded-[2rem] border border-slate-100 space-y-2">
+                <div className="bg-[#ebf0f5]/50 p-3 rounded-[2rem] border border-slate-200 space-y-2">
                   <div className="grid grid-cols-2 gap-2">
                     {/* Referente */}
                     <div className="col-span-2">
@@ -336,7 +336,7 @@ export function NovoLancamentoModal({ isOpen, onClose, editingId }: NovoLancamen
                   </div>
 
                   {/* Dividir Conta */}
-                  <div className="pt-1 border-t border-slate-100">
+                  <div className="pt-1 border-t border-slate-200">
                     <label className="flex items-center gap-2 cursor-pointer group">
                       <input
                         {...register('dividirConta')}
@@ -398,7 +398,7 @@ export function NovoLancamentoModal({ isOpen, onClose, editingId }: NovoLancamen
                 </div>
               </div>
 
-              <div className="p-3 pt-0.5 bg-white border-t border-slate-50 flex-shrink-0 space-y-2">
+              <div className="p-3 pt-0.5 bg-white border-t border-slate-100 flex-shrink-0 space-y-2">
                 {/* Resumo Box */}
                 {valorTotal > 0 && (
                   <div className="bg-slate-900 rounded-[1.2rem] p-2.5 text-white shadow-xl shadow-slate-900/20">
