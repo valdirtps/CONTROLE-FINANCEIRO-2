@@ -62,6 +62,16 @@ export interface Parcela {
   situacao: SituacaoParcela;
 }
 
+export interface Evento {
+  id: string;
+  userId?: string;
+  titulo: string;
+  descricao: string;
+  data: string;
+  finalizado: boolean;
+  createdAt?: any;
+}
+
 export interface LancamentoCompleto extends Parcela {
   referente: string;
   contaNome: string;

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
@@ -25,7 +25,7 @@ import { useAuth } from '@/components/FirebaseProvider';
 import { auth } from '@/lib/firebase';
 import { FirestoreService } from '@/lib/firestore-service';
 import { signOut } from 'firebase/auth';
-import { format, parseISO, startOfMonth } from 'date-fns';
+import { format, parseISO, startOfMonth, startOfDay, differenceInDays } from 'date-fns';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -35,7 +35,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const pathname = usePathname();
-  const { currentMonth, setCurrentMonth, allLancamentosCompletos } = useFinance();
+  const { currentMonth, setCurrentMonth, allLancamentosCompletos, eventos } = useFinance();
   const { user, loading: authLoading, loginWithGoogle, loginWithEmail, registerWithEmail, resetPassword, logout } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -149,6 +149,17 @@ export function AppLayout({ children }: AppLayoutProps) {
     }
   };
 
+  const pendingRemindersCount = useMemo(() => {
+    if (!eventos) return 0;
+    const today = startOfDay(new Date());
+    return eventos.filter(e => {
+      if (e.finalizado) return false;
+      const eventDate = startOfDay(parseISO(e.data));
+      const daysDiff = differenceInDays(eventDate, today);
+      return daysDiff <= 3;
+    }).length;
+  }, [eventos]);
+
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -237,6 +248,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     { name: 'Valores a Pagar', icon: ClipboardList, href: '/consulta-adm' },
     { name: 'Contas', icon: Wallet, href: '/contas' },
     { name: 'Devedores', icon: Users, href: '/devedores' },
+    { name: 'Agenda', icon: Calendar, href: '/agenda' },
     { name: 'Categorias', icon: Settings, href: '/tipos' },
     { name: 'Relatórios', icon: Calendar, href: '/relatorios' },
     { name: 'Configurações', icon: Sliders, href: '/admin' },
@@ -471,14 +483,23 @@ export function AppLayout({ children }: AppLayoutProps) {
                 key={item.name}
                 href={item.href}
                 className={`
-                  flex items-center gap-3.5 px-3.5 py-3 rounded-xl transition-all duration-200
+                  flex items-center gap-3.5 px-3.5 py-3 rounded-xl transition-all duration-200 relative
                   ${isActive 
                     ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' 
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'}
                 `}
               >
                 <item.icon size={20} className="shrink-0" />
-                {isSidebarOpen && <span className="text-sm font-semibold tracking-tight">{item.name}</span>}
+                {isSidebarOpen && <span className="text-sm font-semibold tracking-tight flex-1">{item.name}</span>}
+                {item.name === 'Agenda' && pendingRemindersCount > 0 && (
+                  <span className={`
+                    flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-black
+                    ${isActive ? 'bg-white text-emerald-600' : 'bg-emerald-500 text-white'}
+                    ${!isSidebarOpen ? 'absolute top-2 right-2' : ''}
+                  `}>
+                    {pendingRemindersCount}
+                  </span>
+                )}
               </Link>
             );
           })}

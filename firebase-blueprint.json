@@ -79,6 +79,19 @@
         "situacao": { "type": "string", "enum": ["Pendente", "Pago"] }
       },
       "required": ["lancamentoId", "numeroParcela", "totalParcelas", "valorAdministrador", "valorDevedor", "dataVencimento", "situacao"]
+    },
+    "Evento": {
+      "title": "Evento",
+      "description": "Evento agendado para lembretes",
+      "type": "object",
+      "properties": {
+        "titulo": { "type": "string" },
+        "descricao": { "type": "string" },
+        "data": { "type": "string" },
+        "finalizado": { "type": "boolean" },
+        "userId": { "type": "string" }
+      },
+      "required": ["titulo", "data", "finalizado", "userId"]
     }
   },
   "firestore": {
@@ -105,6 +118,10 @@
     "parcelas": {
       "schema": { "$ref": "Parcela" },
       "description": "Coleção de parcelas individuais"
+    },
+    "events": {
+      "schema": { "$ref": "Evento" },
+      "description": "Coleção de eventos da agenda"
     }
   }
 }

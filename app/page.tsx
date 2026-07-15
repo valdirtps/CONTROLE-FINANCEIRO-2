@@ -5,14 +5,33 @@ import { useFinance } from '@/context/FinanceContext';
 import { AppLayout } from '@/components/AppLayout';
 import { 
   Plus,
-  Calendar
+  Calendar,
+  Bell,
+  CheckCircle2,
+  AlertCircle,
+  ChevronRight
 } from 'lucide-react';
-import { format, parseISO, startOfMonth } from 'date-fns';
+import { format, parseISO, startOfMonth, startOfDay, differenceInDays } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import Link from 'next/link';
+import { motion, AnimatePresence } from 'motion/react';
 import { NovoLancamentoModal } from '@/components/NovoLancamentoModal';
 
 export default function Dashboard() {
-  const { allLancamentosCompletos } = useFinance();
+  const { allLancamentosCompletos, eventos, updateEvento } = useFinance();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  const pendingReminders = useMemo(() => {
+    const today = startOfDay(new Date());
+    return eventos
+      .filter(e => {
+        if (e.finalizado) return false;
+        const eventDate = startOfDay(parseISO(e.data));
+        const daysDiff = differenceInDays(eventDate, today);
+        return daysDiff <= 3; // Start 3 days before OR even if already passed (but not finished)
+      })
+      .sort((a, b) => a.data.localeCompare(b.data));
+  }, [eventos]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -129,6 +148,74 @@ export default function Dashboard() {
             NOVO LANÇAMENTO
           </button>
         </div>
+
+        {/* Agenda Reminders Section */}
+        {pendingReminders.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between px-2">
+              <h3 className="text-sm font-black text-slate-900 flex items-center gap-2">
+                <Bell className="text-emerald-500 animate-bounce" size={16} />
+                LEMBRETES DA AGENDA
+                <span className="bg-emerald-500 text-white text-[10px] px-2 py-0.5 rounded-full ml-1 animate-pulse">
+                  {pendingReminders.length}
+                </span>
+              </h3>
+              <Link href="/agenda" className="text-[10px] font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest flex items-center gap-1 transition-colors">
+                Ver Agenda Completa
+                <ChevronRight size={12} />
+              </Link>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <AnimatePresence mode="popLayout">
+                {pendingReminders.slice(0, 6).map((evento) => {
+                  const eventDate = startOfDay(parseISO(evento.data));
+                  const today = startOfDay(new Date());
+                  const daysDiff = differenceInDays(eventDate, today);
+                  const isExpired = daysDiff < 0;
+
+                  return (
+                    <motion.div
+                      key={evento.id}
+                      layout
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className={`bg-white p-5 rounded-[2rem] border-2 transition-all hover:shadow-xl hover:shadow-slate-200/40 group ${
+                        isExpired ? 'border-rose-100' : 'border-emerald-100'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className={`px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${
+                          isExpired ? 'bg-rose-100 text-rose-600' : 'bg-emerald-100 text-emerald-600'
+                        }`}>
+                          {isExpired ? 'Atrasado' : daysDiff === 0 ? 'Hoje' : `Em ${daysDiff} dias`}
+                        </div>
+                        <button 
+                          onClick={() => updateEvento(evento.id, { finalizado: true })}
+                          className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-emerald-500 hover:text-white transition-all shadow-sm"
+                          title="Marcar como Finalizado"
+                        >
+                          <CheckCircle2 size={16} />
+                        </button>
+                      </div>
+                      
+                      <h4 className="text-sm font-black text-slate-900 mb-1 group-hover:text-emerald-600 transition-colors line-clamp-1">
+                        {evento.titulo}
+                      </h4>
+                      <div className="flex items-center gap-2 text-slate-400">
+                        <Calendar size={12} />
+                        <span className="text-[10px] font-bold uppercase tracking-tight">
+                          {format(parseISO(evento.data), "dd 'de' MMM", { locale: ptBR })}
+                        </span>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </div>
+          </div>
+        )}
 
         {/* Main Summary Table - RESTORED AND COMPACTED */}
         <div className="bg-white rounded-[2rem] border border-slate-100 shadow-lg shadow-slate-200/40 overflow-hidden">

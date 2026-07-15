@@ -9,7 +9,8 @@ import {
   query, 
   where, 
   deleteDoc, 
-  onSnapshot 
+  onSnapshot,
+  serverTimestamp 
 } from 'firebase/firestore';
 import { db, auth } from './firebase';
 import { 
@@ -19,7 +20,8 @@ import {
   TipoLancamento, 
   Lancamento, 
   Parcela,
-  SituacaoParcela
+  SituacaoParcela,
+  Evento
 } from '@/types/finance';
 import { addMonths, format } from 'date-fns';
 
@@ -359,6 +361,49 @@ export const FirestoreService = {
       await deleteDoc(doc(db, 'transactions', id));
     } catch (error) {
       handleFirestoreError(error, OperationType.DELETE, `${pathL}/${pathP}`);
+    }
+  },
+
+  // Agenda Events
+  getEventos: (callback: (eventos: Evento[]) => void) => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return () => {};
+    const q = query(collection(db, 'events'), where('userId', '==', uid));
+    return onSnapshot(q, (snapshot) => {
+      callback(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Evento)));
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, 'events');
+    });
+  },
+
+  addEvento: async (data: Omit<Evento, 'id'>) => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
+    try {
+      await addDoc(collection(db, 'events'), {
+        ...data,
+        userId: uid,
+        createdAt: serverTimestamp()
+      });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, 'events');
+    }
+  },
+
+  updateEvento: async (id: string, data: Partial<Evento>) => {
+    try {
+      const ref = doc(db, 'events', id);
+      await updateDoc(ref, data);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, 'events');
+    }
+  },
+
+  deleteEvento: async (id: string) => {
+    try {
+      await deleteDoc(doc(db, 'events', id));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, 'events');
     }
   }
 };

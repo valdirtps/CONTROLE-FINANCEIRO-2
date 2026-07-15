@@ -8,7 +8,8 @@ import {
   Lancamento, 
   Parcela,
   LancamentoCompleto,
-  Administrador
+  Administrador,
+  Evento
 } from '@/types/finance';
 import { FirestoreService } from '@/lib/firestore-service';
 import { startOfMonth, endOfMonth, isWithinInterval, parseISO } from 'date-fns';
@@ -23,6 +24,7 @@ interface FinanceContextType {
   lancamentosCompletos: LancamentoCompleto[];
   allLancamentosCompletos: LancamentoCompleto[];
   admin: Administrador | null;
+  eventos: Evento[];
   currentMonth: Date;
   setCurrentMonth: (date: Date) => void;
   loading: boolean;
@@ -40,6 +42,9 @@ interface FinanceContextType {
   updateParcelaSituacao: (id: string, situacao: Parcela['situacao']) => Promise<void>;
   deleteLancamento: (id: string) => Promise<void>;
   updateAdmin: (data: Administrador) => Promise<void>;
+  addEvento: (data: Omit<Evento, 'id'>) => Promise<void>;
+  updateEvento: (id: string, data: Partial<Evento>) => Promise<void>;
+  deleteEvento: (id: string) => Promise<void>;
 }
 
 const FinanceContext = createContext<FinanceContextType | undefined>(undefined);
@@ -50,6 +55,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
   const [tipos, setTipos] = useState<TipoLancamento[]>([]);
   const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
   const [parcelas, setParcelas] = useState<Parcela[]>([]);
+  const [eventos, setEventos] = useState<Evento[]>([]);
   const [admin, setAdmin] = useState<Administrador | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [loading, setLoading] = useState(true);
@@ -69,6 +75,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     const unsubTipos = FirestoreService.getTipos(setTipos);
     const unsubLancamentos = FirestoreService.getLancamentos(setLancamentos);
     const unsubParcelas = FirestoreService.getParcelas(setParcelas);
+    const unsubEventos = FirestoreService.getEventos(setEventos);
     
     FirestoreService.getAdmin().then(data => {
       if (data) {
@@ -93,6 +100,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       unsubTipos();
       unsubLancamentos();
       unsubParcelas();
+      unsubEventos();
     };
   }, [user, authLoading]);
 
@@ -165,6 +173,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     lancamentosCompletos,
     allLancamentosCompletos,
     admin,
+    eventos,
     currentMonth,
     setCurrentMonth,
     loading,
@@ -184,7 +193,10 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     updateAdmin: async (data: Administrador) => {
       await FirestoreService.setAdmin(data);
       setAdmin(data);
-    }
+    },
+    addEvento: FirestoreService.addEvento,
+    updateEvento: FirestoreService.updateEvento,
+    deleteEvento: FirestoreService.deleteEvento
   };
 
   return (
